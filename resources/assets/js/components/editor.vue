@@ -1,0 +1,335 @@
+<template>
+    <div class="card">
+        <form method="POST" :action="url" @submit="validate" enctype="multipart/form-data">
+
+            <slot></slot>
+            <input v-if="_id" type="hidden" name="_method" value="PUT">
+
+            <div class="card-header clearfix">
+                <h4 v-if="_id" class="card-title float-left">Edytowanie strony</h4>
+                <h4 v-else class="card-title float-left">Dodawanie nowej strony</h4>
+                <div class="float-right">
+                    <a v-if="_id" :href="obj.permalink" target="_blank" class="btn btn-info">
+                        <i class="mdi mdi-open-in-new"></i> Preview
+                    </a>
+                    <button type="submit" class="btn btn-primary">Zapisz</button>
+                </div>
+            </div>
+
+            <div class="card-body row">
+
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <multiselect v-model.lazy="obj.status" :options="statuses" track-by="id" label="name" placeholder="Wybierz status"></multiselect>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Slug</label>
+                        <input type="text" :class="getInputClass('slug')" name="slug" v-model.lazy="slug">
+                        <small v-if="hasError('slug')" class="error mt-2 text-danger">{{ errors.slug[0] }}</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Język</label>
+                        <multiselect v-model.lazy="obj.lang" :options="langs" track-by="key" label="name" placeholder="Wybierz język"></multiselect>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Typ</label>
+                        <multiselect v-model.lazy="obj.type" track-by="id" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image</label>
+                        <button class="btn btn-info" id="media" type="button">Wybierz</button>
+                        <div v-if="obj.image" class="img-thumbnail">
+                            <img :src="obj.image"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="form-group">
+                        <label>Tytuł</label>
+                        <input type="text" :class="getInputClass('name')" name="name" placeholder="Wpisz tytuł" v-model.lazy="obj.name">
+                        <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content</label>
+                        <ckeditor :editor="editor" v-model="obj.content" :config="editorConfig"></ckeditor>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Parent</label>
+                        <multiselect v-model.lazy="obj.parent" track-by="id" label="name" placeholder="Zaczni pisać" :options="parents" :searchable="true" @search-change="getParents">
+                            <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
+                        </multiselect>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</template>
+
+<script>
+    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+    import MyCustomUploadAdapterPlugin from './UploadAdapterPlugin';
+
+    export default {
+        name: 'editor',
+        props : ['_id'],
+
+        data() {
+            return {
+                editor: ClassicEditor,
+                editorConfig: {
+                    extraPlugins: [ MyCustomUploadAdapterPlugin ]
+                },
+                statuses: [],
+                parents: [{id: 0, name: 'Nie ma'}],
+                langs: [],
+                types: [],
+                obj: {
+                    _id: 0,
+                    name: '',
+                    content: '',
+                    permalink: '/',
+                    status: {id: 'draft', name: 'DRAFT'},
+                    image: '',
+                    parent: {id: 0, name: 'Nie ma'},
+                    lang: {key: 'pl', name: 'Polski'},
+                    type: {id: 'main', name: 'MAIN'}
+                },
+                errors: {
+                    name: {},
+                    slug: {}
+                },
+                slug: ''
+            };
+        },
+
+        created: function() {
+            this.getStatuses();
+        },
+
+        mounted: function() {
+            let self = this;
+            $('#media').mediaSelector({
+                extensions: 'all'
+            });
+
+            $("#media").on('media:selected', function(event, args) {
+                self.obj.image = args.url;
+            });
+        },
+
+        computed: {
+
+            url: function () {
+                return this._id ? ('/dashboard/pages/' + this._id) : '/dashboard/pages/store';
+            }
+        },
+
+        methods: {
+
+            hasError: function(key) {
+                return this.errors[key].length > 0;
+            },
+
+            getInputClass: function(key) {
+                let className = 'form-control ';
+                if (this.hasError(key)) {
+                    className += 'is-invalid';
+                } else {
+                    if (this.obj[key]) {
+                        className += 'is-valid';
+                    }
+                }
+                return className;
+            },
+
+            getTypes: function() {
+                axios.get('/dashboard/pages/types')
+                    .then(res => {
+                        this.types = res.data;
+                        this.getPage();
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
+
+            getLangs: function() {
+                axios.get('/dashboard/languages/get')
+                    .then(res => {
+                        this.langs = res.data;
+                        this.getTypes();
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
+
+            getParents: function(query) {
+                axios.get('/dashboard/pages/get?query=' + query + '&qid=' + this._id)
+                    .then(res => {
+                        this.parents = [];
+                        this.parents.push({id: 0, name: 'Nie ma'});
+
+                        res.data.forEach(item => {
+                            this.parents.push(item);
+                        });
+
+                        this.parents.forEach(item => {
+                            if (item.id === this.obj.parent) {
+                                this.obj.parent = item;
+                            }
+                        });
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
+
+            getStatuses: function() {
+                let self = this;
+
+                axios.get('/dashboard/pages/statuses')
+                    .then(res => {
+                        self.statuses = res.data;
+                        this.getLangs();
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
+
+            MyCustomUploadAdapterPlugin ( editor ) {
+                editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+                    return new MyUploadAdapter( loader );
+                };
+            },
+
+            getPage: function() {
+                let self = this;
+                if (self._id) {
+                    axios.get('/dashboard/pages/get?id=' + self._id)
+                        .then(res => {
+                            self.obj = res.data;
+
+                            self.statuses.forEach(item => {
+                                if (item.id === self.obj.status) {
+                                    self.obj.status = item;
+                                }
+                            });
+
+                            self.langs.forEach(item => {
+                                if (item.key === self.obj.lang) {
+                                    self.obj.lang = item;
+                                }
+                            });
+
+                            self.types.forEach(item => {
+                                if (item.id === self.obj.type) {
+                                    self.obj.type = item;
+                                }
+                            });
+
+                            self.getParents(self.obj.parent);
+
+                            self.slug = self.getSlug();
+
+                        }).catch(err => {
+                        console.log(err)
+                    })
+                }
+            },
+
+            validate: function(e) {
+                e.preventDefault();
+                if (this.obj.name) {console.log(JSON.stringify(this.obj));
+                    let formData = new FormData();
+                    formData.append('_method', this._id ? 'PUT' : 'POST');
+                    formData.append('obj', JSON.stringify(this.obj));
+
+                    axios.post(this.url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                        .then(res => {
+                            window.location = res.data.redirect;
+                        }).catch(err => {
+                        console.log(err);
+                    });
+                } else {
+                    this.errors.name = ['To pole jest wymagane'];
+                    return false;
+                }
+            },
+
+            sanitize: function(str) {
+                return str.toLowerCase()
+                    .replace(/ę/gi, 'e')
+                    .replace(/ą/gi, 'a')
+                    .replace(/ó/gi, 'u')
+                    .replace(/ł/gi, 'l')
+                    .replace(/ś/gi, 's')
+                    .replace(/ż|ź/gi, 'z')
+                    .replace(/ć/gi, 'c')
+                    .replace(/ń/gi, 'n')
+                    .replace(/\s*$/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/gi, '');
+            },
+
+            getSlug: function() {
+                let index = this.obj.permalink.lastIndexOf('/');
+                return this.obj.permalink.substr(index + 1, this.obj.permalink.length - index);
+            },
+
+            setPermalink: function() {
+                this.obj.permalink = '';
+                if (this.obj.parent.id) {
+                    this.obj.permalink = this.obj.parent.permalink;
+                }
+                this.obj.permalink += '/' + this.slug;
+                this.obj.permalink = this.obj.permalink.replace(/\/*/, '/');
+            },
+
+            checkPermalinkUnique: function() {
+                axios.get('/dashboard/pages/check/' + this._id + '?permalink=' + this.obj.permalink)
+                    .then(res => {
+                        if (res.data) {
+                            this.errors.slug = [];
+                        } else {
+                            this.errors.slug = ['To pole musi być unikalne. Slug z takim rodzicem już istnieje. Musisz wymyślieć inny slug, albo wybrać innego rodzica'];
+                        }
+                    }).catch(err => {
+                    console.log(err)
+                })
+            }
+        },
+
+        watch: {
+            'obj.name': function() {
+                if (!this.obj.name) {
+                    this.errors.name = ['To pole jest wymagane'];
+                } else {
+                    if (this.slug === '' && !this._id) {
+                        this.slug = this.sanitize(this.obj.name);
+                    }
+                }
+            },
+
+            'obj.parent': function() {
+                this.setPermalink();
+                this.checkPermalinkUnique();
+            },
+
+            'slug': function() {
+                this.setPermalink();
+                this.checkPermalinkUnique();
+            }
+        }
+    }
+</script>

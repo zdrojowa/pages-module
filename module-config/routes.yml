@@ -1,0 +1,79 @@
+index:
+  path: /dashboard/pages
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@index
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+pages:
+  path: /dashboard/pages/get
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@get
+  methods:
+    - POST
+    - GET
+  permission: PagesModule.pages
+
+add:
+  path: /dashboard/pages/add
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@add
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+store:
+  path: /dashboard/pages/store
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@store
+  methods:
+    - POST
+  permission: PagesModule.pages
+
+edit:
+  path: /dashboard/pages/{{page}}/edit
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@edit
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+update:
+  path: /dashboard/pages/{{page}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@update
+  methods:
+    - PUT
+    - PATCH
+  permission: PagesModule.pages
+
+destroy:
+  path: /dashboard/pages/destroy/{{page}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@destroy
+  methods:
+    - DELETE
+  permission: PagesModule.pages
+
+statuses:
+  path: /dashboard/pages/statuses
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@statuses
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+types:
+  path: /dashboard/pages/types
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@types
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+check:
+  path: /dashboard/pages/check/{{id}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@check
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+page:
+  path: /{{slug}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@page
+  methods:
+    - GET
+  where:
+    slug: (.*)

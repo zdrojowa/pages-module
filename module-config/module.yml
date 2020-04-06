@@ -1,0 +1,7 @@
+name: PagesModule
+version: 0.0.1
+
+aclAnchor: PagesModule
+aclName: Moduł stron
+
+routePrefix: PagesModule
