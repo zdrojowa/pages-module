@@ -10,3 +10,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.0.2
 - change composer.json
+
+## Version 1.0.3
+- permissions

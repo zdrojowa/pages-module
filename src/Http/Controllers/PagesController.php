@@ -5,6 +5,7 @@ namespace Selene\Modules\PagesModule\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Selene\Modules\DashboardModule\ZdrojowaTable;
 use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Support\Status;
@@ -100,11 +101,22 @@ class PagesController extends Controller {
     }
 
     public function page(Request $request, $permalink = '/') {
-        $page = Page::query()->where('permalink', '=', $permalink)->first();
 
-        if (!$page) {
-            $page = Page::query()->where('permalink', '=', '/' . $permalink)->first();
+        $isAdmin = false;
+        if (Auth::check() && Auth::user()->admin) {
+            $isAdmin = true;
         }
+
+        $pageBuilder = Page::query()
+            ->where('permalink', '=', $permalink)
+            ->orWhere('permalink', '=', '/' . $permalink);
+
+        if (!$isAdmin) {
+            $pageBuilder->where('status', '=', 'public');
+        }
+
+        $page = $pageBuilder->first();
+
         if (!$page) {
             abort(404);
         }
