@@ -44,6 +44,12 @@ mix.module('PagesModule', 'vendor/zdrojowa/pages-module');
 ],
 ```
 
+- Add templates in resources/views/partials:
+
+``` bash
+main.blade.php
+```
+
 - run npm
 
 ``` bash

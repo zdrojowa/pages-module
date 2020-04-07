@@ -9,6 +9,7 @@ use Selene\Modules\DashboardModule\ZdrojowaTable;
 use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Support\Status;
 use Selene\Modules\PagesModule\Support\Type;
+use Selene\Modules\SettingsModule\Models\Setting;
 
 class PagesController extends Controller {
 
@@ -108,8 +109,9 @@ class PagesController extends Controller {
             abort(404);
         }
 
-        return view('PagesModule::pages.' . $page->type, [
-            'page' => $page
+        return view($page->type, [
+            'page' => $page,
+            'settings' => Setting::getAllByKey()
         ]);
     }
 
