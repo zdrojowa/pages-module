@@ -31,6 +31,7 @@
     @parent
     @javascript('csrf', csrf_token())
     @javascript('ajaxUpload', route('MediaManager::media.upload.ajax'))
+    @javascript('infoUrl', route('MediaManager::media.image.info', ['media' => '%%id%%']))
     <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@13.0.1/dist/lazyload.min.js"></script>
     <script src="{{ mix('vendor/js/MediaManager.js') }}"></script>
     <script src="{{ mix('vendor/js/PagesModule.js') }}"></script>

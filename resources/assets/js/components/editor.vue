@@ -1,9 +1,10 @@
 <template>
-    <div class="card">
-        <form method="POST" :action="url" @submit="validate" enctype="multipart/form-data">
+    <form method="POST" :action="url" @submit="validate" enctype="multipart/form-data">
 
-            <slot></slot>
-            <input v-if="_id" type="hidden" name="_method" value="PUT">
+        <slot></slot>
+        <input v-if="_id" type="hidden" name="_method" value="PUT">
+
+        <div class="card mb-2">
 
             <div class="card-header clearfix">
                 <h4 v-if="_id" class="card-title float-left">Edytowanie strony</h4>
@@ -42,7 +43,7 @@
 
                     <div class="form-group">
                         <label>Image</label>
-                        <button class="btn btn-info" id="media" type="button">Wybierz</button>
+                        <media-selector extensions="jpg,jpeg,png" @media-selected="selectImage"></media-selector>
                         <div v-if="obj.image" class="img-thumbnail">
                             <img :src="obj.image"/>
                         </div>
@@ -70,8 +71,44 @@
                 </div>
 
             </div>
-        </form>
-    </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h4>Hiro</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label>Video</label>
+                    <media-selector extensions="3gp,3g2,asf,wmv,avi,divx,evo,f4v,flv,mp4,mpg,mpeg" @media-selected="selectVideo"></media-selector>
+
+                    <a v-if="obj.hiro_video" :href="obj.hiro_video" target="_blank">
+                        <button @click="removeVideo" class="btn-danger" type="button">
+                            <i class="mdi mdi-delete"></i>
+                        </button>
+                        <div class="thumbnail">
+                            <i class="mdi mdi-file-video-outline text-white"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label>Images</label>
+                    <media-selector extensions="jpg,jpeg,png" @media-selected="selectImages"></media-selector>
+                    <div class="img-preview">
+                        <div v-for="(image ,i) in obj.hiro_images" :key="i"  class="thumbnail-img">
+                            <button @click="removeImage(i)" class="btn-danger" type="button">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                            <img :src="image"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </template>
 
 <script>
@@ -101,7 +138,9 @@
                     image: '',
                     parent: {id: 0, name: 'Nie ma'},
                     lang: {key: 'pl', name: 'Polski'},
-                    type: {id: 'main', name: 'MAIN'}
+                    type: {id: 'main', name: 'MAIN'},
+                    hiro_video: '',
+                    hiro_images: []
                 },
                 errors: {
                     name: {},
@@ -115,17 +154,6 @@
             this.getStatuses();
         },
 
-        mounted: function() {
-            let self = this;
-            $('#media').mediaSelector({
-                extensions: 'all'
-            });
-
-            $("#media").on('media:selected', function(event, args) {
-                self.obj.image = args.url;
-            });
-        },
-
         computed: {
 
             url: function () {
@@ -134,6 +162,29 @@
         },
 
         methods: {
+
+            removeImage: function(position) {
+                this.obj.hiro_images.splice(position, 1);
+            },
+
+            removeVideo: function(position) {
+                this.obj.hiro_video = '';
+            },
+
+            selectVideo: function(url) {
+                this.obj.hiro_video = url;
+                this.$forceUpdate();
+            },
+
+            selectImage: function(url) {
+                this.obj.image = url;
+                this.$forceUpdate();
+            },
+
+            selectImages: function(url) {
+                this.obj.hiro_images.push(url);
+                this.$forceUpdate();
+            },
 
             hasError: function(key) {
                 return this.errors[key].length > 0;
@@ -215,6 +266,14 @@
                     axios.get('/dashboard/pages/get?id=' + self._id)
                         .then(res => {
                             self.obj = res.data;
+
+                            if (typeof self.obj.hiro_video === 'undefined') {
+                                self.obj.hiro_video = '';
+                            }
+
+                            if (typeof self.obj.hiro_images === 'undefined') {
+                                self.obj.hiro_images = [];
+                            }
 
                             self.statuses.forEach(item => {
                                 if (item.id === self.obj.status) {
@@ -329,6 +388,10 @@
             'slug': function() {
                 this.setPermalink();
                 this.checkPermalinkUnique();
+            },
+
+            'obj.hiro_video': function() {
+                console.log(this.obj);
             }
         }
     }

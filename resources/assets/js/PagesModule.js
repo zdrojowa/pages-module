@@ -7,6 +7,7 @@ window.axios = require('axios');
 Vue.use(CKEditor);
 
 Vue.component('multiselect', MultiSelect);
+Vue.component('media-selector', require('./components/media-selector.vue').default);
 Vue.component('editor', require('./components/editor.vue').default);
 
 const app = new Vue({

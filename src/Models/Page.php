@@ -16,7 +16,19 @@ class Page extends Model
 
     protected $primaryKey = '_id';
 
-    protected $fillable = ['status', 'permalink', 'lang', 'type', 'image', 'name', 'content', 'translation', 'parent'];
+    protected $fillable = [
+        'status',
+        'permalink',
+        'lang',
+        'type',
+        'image',
+        'name',
+        'content',
+        'translation',
+        'parent',
+        'hiro_video',
+        'hiro_images'
+    ];
 
     //
     //public function pageSections() {
@@ -24,15 +36,15 @@ class Page extends Model
     //    //return $this->hasMany(Section::class, 'id', 'sections');
     //}
 
-    public function sections() {
-        return $this->belongsToMany(Section::class, null, 'pageIds', 'sectionIds');
-        //return $this->belongsToMany(Section::class, null, 'pageIds', 'sectionIds');
-    }
-
-    public function getSection($sectionId)
-    {
-        return $this->where('pageId', 1);
-    }
+//    public function sections() {
+//        return $this->belongsToMany(Section::class, null, 'pageIds', 'sectionIds');
+//        //return $this->belongsToMany(Section::class, null, 'pageIds', 'sectionIds');
+//    }
+//
+//    public function getSection($sectionId)
+//    {
+//        return $this->where('pageId', 1);
+//    }
 
     //public function pagesSectionsOrders()
     //{

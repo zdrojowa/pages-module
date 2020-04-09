@@ -1,5 +1,36 @@
 @import "~vue-multiselect/dist/vue-multiselect.min.css";
 
-div.img-thumbnail img {
+div.video-thumbnail {
+    padding: 0.25rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-width: 100%;
+    height: auto;
+}
+
+div.img-thumbnail img, div.video-thumbnail video {
     width: 100%;
+}
+
+div.img-preview {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    div.thumbnail-img {
+        width: 185px;
+        height: 210px;
+
+        button {
+            position: relative;
+            top: 10px;
+            left: 60px;
+        }
+
+        img {
+            width: 100%;
+            object-fit: contain;
+        }
+    }
 }
