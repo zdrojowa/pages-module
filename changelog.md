@@ -19,3 +19,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.0.5
 - fix styles
+
+## Version 1.0.6
+- fix view index

@@ -38,7 +38,7 @@
 
     <script>
 
-        let table = $('.table').zdrojowaTable({
+        $('.table').zdrojowaTable({
             ajax: {
                 url: "{{route('PagesModule::pages')}}",
                 method: "POST",
@@ -101,18 +101,20 @@
             ]
         });
 
+
+
         let pages = [];
         let langs = [];
 
-        getLangs();
+        setTimeout(function() {
+            getLangs();
+        }, 500);
 
         function getLangs() {
             axios.get('/dashboard/languages/get')
                 .then(res => {
                     langs = res.data;
-                    setTimeout(function() {
-                        getTransltions();
-                    }, 500);
+                    getTransltions();
                 }).catch(err => {
                 console.log(err)
             })
@@ -157,8 +159,6 @@
                 console.log(err)
             })
         };
-
-
     </script>
 @endsection
 
