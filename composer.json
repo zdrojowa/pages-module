@@ -9,7 +9,7 @@
         }
     ],
     "homepage": "https://github.com/zdrojowa/pages-module",
-    "keywords": ["Laravel", "PagesModule"],
+    "keywords": ["PagesModule", "Laravel", "Vue"],
     "require": {
         "zdrojowa/cms-kernel": "^2.0",
         "zdrojowa/dashboardmodule": "^1.1",

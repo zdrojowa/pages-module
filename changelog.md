@@ -16,3 +16,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.0.4
 - Hiro
+
+## Version 1.0.5
+- fix styles
