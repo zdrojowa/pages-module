@@ -70,6 +70,13 @@ check:
     - GET
   permission: PagesModule.pages
 
+addTranslation:
+  path: /dashboard/pages/add-translation/{{page}}/{lang}
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@addTranslation
+  methods:
+    - GET
+  permission: PagesModule.pages
+
 page:
   path: /{{slug}}
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@page

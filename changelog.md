@@ -22,3 +22,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.0.6
 - fix view index
+
+## Version 1.1.0
+- add translations

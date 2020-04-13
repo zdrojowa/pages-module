@@ -15,7 +15,7 @@
     <div class="content-wrapper">
         <div id="app">
             @if (isset($page))
-                <editor :_id=`{{ $page->_id }}`>
+                <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
                     {{ csrf_field() }}
                 </editor>
             @else

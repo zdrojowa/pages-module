@@ -2,7 +2,7 @@
     <form method="POST" :action="url" @submit="validate" enctype="multipart/form-data">
 
         <slot></slot>
-        <input v-if="_id" type="hidden" name="_method" value="PUT">
+        <input v-if="_id" type="hidden" name="translation" :value="_id">
 
         <div class="card mb-2">
 
@@ -117,7 +117,7 @@
 
     export default {
         name: 'editor',
-        props : ['_id'],
+        props : ['_id', 'lang'],
 
         data() {
             return {
@@ -126,17 +126,19 @@
                     extraPlugins: [ MyCustomUploadAdapterPlugin ]
                 },
                 statuses: [],
-                parents: [{id: 0, name: 'Nie ma'}],
+                defaultParent: {id: 0, name: 'Nie ma'},
+                parents: [],
                 langs: [],
+                mainLang: 'pl',
                 types: [],
                 obj: {
-                    _id: 0,
+                    id: 0,
                     name: '',
                     content: '',
                     permalink: '/',
                     status: {id: 'draft', name: 'DRAFT'},
                     image: '',
-                    parent: {id: 0, name: 'Nie ma'},
+                    parent: this.defaultParent,
                     lang: {key: 'pl', name: 'Polski'},
                     type: {id: 'main', name: 'MAIN'},
                     hiro_video: '',
@@ -157,7 +159,7 @@
         computed: {
 
             url: function () {
-                return this._id ? ('/dashboard/pages/' + this._id) : '/dashboard/pages/store';
+                return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store';
             }
         },
 
@@ -212,31 +214,39 @@
                 })
             },
 
+            getMainLang: function() {
+                axios.get('/dashboard/settings/getByKey/lang')
+                    .then(res => {
+                        this.mainLang = res.data.value;
+                        this.obj.lang = this.getItem(this.langs, 'key', this.mainLang);
+                        this.getTypes();
+                    }).catch(err => {
+                        console.log(err);
+                        this.getTypes();
+                });
+            },
+
             getLangs: function() {
                 axios.get('/dashboard/languages/get')
                     .then(res => {
                         this.langs = res.data;
-                        this.getTypes();
+                        this.getMainLang();
                     }).catch(err => {
                     console.log(err)
                 })
             },
 
             getParents: function(query) {
-                axios.get('/dashboard/pages/get?query=' + query + '&qid=' + this._id)
+                axios.get('/dashboard/pages/get?query=' + query + '&qid=' + this.obj.id + '&lang=' + this.obj.lang.key)
                     .then(res => {
                         this.parents = [];
-                        this.parents.push({id: 0, name: 'Nie ma'});
+                        this.parents.push(this.defaultParent);
 
                         res.data.forEach(item => {
                             this.parents.push(item);
                         });
 
-                        this.parents.forEach(item => {
-                            if (item.id === this.obj.parent) {
-                                this.obj.parent = item;
-                            }
-                        });
+                        this.obj.parent = this.getItem(this.parents, 'id', this.obj.parent);
                     }).catch(err => {
                     console.log(err)
                 })
@@ -260,6 +270,19 @@
                 };
             },
 
+            getItem: function(arr, key, val) {
+
+                let item = val;
+
+                arr.forEach(it => {
+                    if (it[key] === val) {
+                        item = it;
+                    }
+                });
+
+                return item;
+            },
+
             getPage: function() {
                 let self = this;
                 if (self._id) {
@@ -275,40 +298,36 @@
                                 self.obj.hiro_images = [];
                             }
 
-                            self.statuses.forEach(item => {
-                                if (item.id === self.obj.status) {
-                                    self.obj.status = item;
-                                }
-                            });
-
-                            self.langs.forEach(item => {
-                                if (item.key === self.obj.lang) {
-                                    self.obj.lang = item;
-                                }
-                            });
-
-                            self.types.forEach(item => {
-                                if (item.id === self.obj.type) {
-                                    self.obj.type = item;
-                                }
-                            });
-
-                            self.getParents(self.obj.parent);
+                            self.obj.status = self.getItem(self.statuses, 'id', self.obj.status);
+                            self.obj.type   = self.getItem(self.types, 'id', self.obj.type);
 
                             self.slug = self.getSlug();
+
+                            if (self.lang !== self.obj.lang) {
+                                self.obj.lang   = self.lang;
+                                self.obj.id     = 0;
+                                self.obj.parent = this.defaultParent;
+                            }
+                            self.obj.lang = self.getItem(self.langs, 'key', self.obj.lang);
+
+                            self.getParents(self.obj.parent);
 
                         }).catch(err => {
                         console.log(err)
                     })
+                } else {
+                    this.parents    = [this.defaultParent];
+                    this.obj.parent = this.defaultParent;
                 }
             },
 
             validate: function(e) {
                 e.preventDefault();
-                if (this.obj.name) {console.log(JSON.stringify(this.obj));
+                if (this.obj.name) {
                     let formData = new FormData();
-                    formData.append('_method', this._id ? 'PUT' : 'POST');
+                    formData.append('_method', this.obj.id ? 'PUT' : 'POST');
                     formData.append('obj', JSON.stringify(this.obj));
+                    formData.append('translation', this._id);
 
                     axios.post(this.url, formData, {
                         headers: {
@@ -343,20 +362,29 @@
 
             getSlug: function() {
                 let index = this.obj.permalink.lastIndexOf('/');
-                return this.obj.permalink.substr(index + 1, this.obj.permalink.length - index);
+                let slug  = this.obj.permalink.substr(index + 1, this.obj.permalink.length - index);
+                if (slug === this.obj.lang) {
+                    slug = '';
+                }
+                return slug;
             },
 
             setPermalink: function() {
                 this.obj.permalink = '';
+                if (this.mainLang !== this.obj.lang.key) {
+                    this.obj.permalink = '/' + this.obj.lang.key;
+                }
                 if (this.obj.parent.id) {
                     this.obj.permalink = this.obj.parent.permalink;
                 }
-                this.obj.permalink += '/' + this.slug;
+                if (this.slug !== '' || this.obj.permalink === '') {
+                    this.obj.permalink += '/' + this.slug;
+                }
                 this.obj.permalink = this.obj.permalink.replace(/\/*/, '/');
             },
 
             checkPermalinkUnique: function() {
-                axios.get('/dashboard/pages/check/' + this._id + '?permalink=' + this.obj.permalink)
+                axios.get('/dashboard/pages/check/' + this.obj.id + '?permalink=' + this.obj.permalink)
                     .then(res => {
                         if (res.data) {
                             this.errors.slug = [];
@@ -374,7 +402,7 @@
                 if (!this.obj.name) {
                     this.errors.name = ['To pole jest wymagane'];
                 } else {
-                    if (this.slug === '' && !this._id) {
+                    if (this.slug === '' && !this.obj.id) {
                         this.slug = this.sanitize(this.obj.name);
                     }
                 }
@@ -388,10 +416,6 @@
             'slug': function() {
                 this.setPermalink();
                 this.checkPermalinkUnique();
-            },
-
-            'obj.hiro_video': function() {
-                console.log(this.obj);
             }
         }
     }

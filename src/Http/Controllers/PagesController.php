@@ -7,16 +7,45 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Selene\Modules\DashboardModule\ZdrojowaTable;
+use Selene\Modules\LanguageModule\Models\Language;
 use Selene\Modules\PagesModule\Models\Page;
+use Selene\Modules\PagesModule\Models\Translation;
 use Selene\Modules\PagesModule\Support\Status;
 use Selene\Modules\PagesModule\Support\Type;
 use Selene\Modules\SettingsModule\Models\Setting;
 
 class PagesController extends Controller {
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('PagesModule::index');
+        $pages = Page::query()->orderByDesc('_id');
+
+        if ($request->has('lang')) {
+            $lang = $request->get('lang', 'pl');
+        } else {
+            $setting = Setting::query()
+                ->where('key', '=', 'lang')
+                ->first();
+            if ($setting) {
+                $lang = $setting->value;
+            } else {
+                $lang = 'pl';
+            }
+        }
+
+        $pages->where('lang', '=', $lang);
+
+        $name = $request->get('name', '');
+        if (!empty($name)) {
+            $pages->where('name', 'LIKE', '%' . $name . '%');
+        }
+
+        return view('PagesModule::index', [
+            'pages' => $pages->paginate(50, ['*'], 'page', $request->get('page') ?? 1),
+            'langs' => Language::all(),
+            'lang'  => $lang,
+            'name'  => $name
+        ]);
     }
 
     public function get(Request $request) {
@@ -32,9 +61,17 @@ class PagesController extends Controller {
         }
 
         if ($request->has('query')) {
-            $pages->where('name', 'like', '%' . $request->get('query', '') . '%')
-                ->orWhere('_id', '=', $request->get('query', '') )
-                ->where('_id', '!=', $request->get('qid', 0));
+            $query = $request->get('query', '');
+
+            if (!empty($query)) {
+                $pages->where('name', 'like', '%' . $query . '%')
+                    ->orWhere('_id', '=', $query);
+            }
+            $pages->where('_id', '!=', $request->get('qid', 0));
+        }
+
+        if ($request->has('lang')) {
+            $pages->where('lang', '=', $request->get('lang'));
         }
 
         return response()->json($pages->get());
@@ -45,7 +82,7 @@ class PagesController extends Controller {
     }
 
     public function edit(Page $page) {
-        return view('PagesModule::edit', ['page' => $page]);
+        return view('PagesModule::edit', ['page' => $page, 'lang' => $page->lang]);
     }
 
     public function store(Request $request) {
@@ -82,22 +119,90 @@ class PagesController extends Controller {
         $request->merge($obj);
 
         if ($page === null) {
-            return Page::create($request->all());
+            $page = Page::create($request->all());
         }
-        if ($page->update($request->all())) {
-            return $page;
+        if (!$page->update($request->all())) {
+            return null;
         }
-        return null;
+
+        if ($request->has('translation')) {
+            $translationFrom = $request->get('translation');
+
+            if ($translationFrom !== $page->_id) {
+                $from = Page::where('_id', '=', $translationFrom)->first();
+                if ($from) {
+                    $translations = json_decode($from->translations, true);
+                    if (empty($translations)) {
+                        $translations = [];
+                    }
+                    $translations[] = $page->_id;
+                    $from->translations = json_encode($translations);
+                    $from->save();
+
+                    $translations[] = $from->_id;
+                    foreach ($translations as $tr) {
+                        $trPage = Page::where('_id', '=', $tr)->first();
+                        if ($trPage) {
+                            $trPage->translations = json_encode(array_values(array_diff($translations, [$tr])));
+                            $trPage->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        return $page;
     }
 
     public function destroy(Page $page, Request $request): void
     {
         try {
+            $translations = array_diff(json_decode($page->translations, true), [$page->_id]);
+
+            foreach ($translations as $id) {
+                $translation = Page::where('_id', '=', $id)->first();
+                if ($translation) {
+                    $translation->translations = json_encode(array_values(array_diff($translations, [$id])));
+                    $translation->save();
+                }
+            }
             $page->delete();
             $request->session()->flash('alert-success', 'Strona została usunęta');
         } catch (\Exception $e) {
             $request->session()->flash('alert-error', 'Error: ' . $e->getMessage());
         }
+    }
+
+    public function statuses(): JsonResponse
+    {
+        $statuses = [];
+        foreach (Status::toArray() as $key => $value) {
+            $statuses[] = ['id' => $value, 'name' => $key];
+        }
+        return response()->json($statuses);
+    }
+
+    public function types(): JsonResponse
+    {
+        $types = [];
+        foreach (Type::toArray() as $key => $value) {
+            $types[] = ['id' => $value, 'name' => $key];
+        }
+        return response()->json($types);
+    }
+
+    public function check($id, Request $request): JsonResponse
+    {
+        $pages = Page::query()->where('_id', '!=', $id);
+
+        if ($request->has('permalink')) {
+            $pages->where('permalink', '=', $request->get('permalink'));
+        }
+        return response()->json(!$pages->exists());
+    }
+
+    public function addTranslation(Page $page, $lang) {
+        return view('PagesModule::edit', ['page' => $page, 'lang' => $lang]);
     }
 
     public function page(Request $request, $permalink = '/') {
@@ -125,34 +230,5 @@ class PagesController extends Controller {
             'page' => $page,
             'settings' => Setting::getAllByKey()
         ]);
-    }
-
-    public function statuses(): JsonResponse
-    {
-        $statuses = [];
-        foreach (Status::toArray() as $key => $value) {
-            $statuses[] = ['id' => $value, 'name' => $key];
-        }
-        return response()->json($statuses);
-    }
-
-    public function types(): JsonResponse
-    {
-        $types = [];
-        foreach (Type::toArray() as $key => $value) {
-            $types[] = ['id' => $value, 'name' => $key];
-        }
-        return response()->json($types);
-    }
-
-
-    public function check($id, Request $request): JsonResponse
-    {
-        $pages = Page::query()->where('_id', '!=', $id);
-
-        if ($request->has('permalink')) {
-            $pages->where('permalink', '=', $request->get('permalink'));
-        }
-        return response()->json(!$pages->exists());
     }
 }
