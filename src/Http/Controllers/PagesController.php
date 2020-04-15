@@ -12,6 +12,8 @@ use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Models\Translation;
 use Selene\Modules\PagesModule\Support\Status;
 use Selene\Modules\PagesModule\Support\Type;
+use Selene\Modules\RevisionModule\Models\Revision;
+use Selene\Modules\RevisionModule\Support\Action;
 use Selene\Modules\SettingsModule\Models\Setting;
 
 class PagesController extends Controller {
@@ -82,7 +84,15 @@ class PagesController extends Controller {
     }
 
     public function edit(Page $page) {
-        return view('PagesModule::edit', ['page' => $page, 'lang' => $page->lang]);
+        return view('PagesModule::edit', [
+            'page'      => $page,
+            'lang'      => $page->lang,
+            'revisions' => Revision::query()->where('table', '=', 'pages')
+                ->where('content_id', '=', $page->_id)
+                ->orderByDesc('_id')
+                ->limit(50)
+                ->get()
+        ]);
     }
 
     public function store(Request $request) {
@@ -118,8 +128,10 @@ class PagesController extends Controller {
 
         $request->merge($obj);
 
+        $action = 'updated';
         if ($page === null) {
             $page = Page::create($request->all());
+            $action = 'created';
         }
         if (!$page->update($request->all())) {
             return null;
@@ -151,12 +163,25 @@ class PagesController extends Controller {
             }
         }
 
+        $page->refresh();
+
+        Revision::create([
+            'table' => 'pages',
+            'action' => $action,
+            'content_id' => $page->id,
+            'content' => json_encode($page),
+            'created_at' => now(),
+            'user_id' => $request->user()->id
+        ]);
         return $page;
     }
 
     public function destroy(Page $page, Request $request): void
     {
         try {
+
+            $id = $page->_id;
+
             $translations = array_diff(json_decode($page->translations, true), [$page->_id]);
 
             foreach ($translations as $id) {
@@ -167,6 +192,16 @@ class PagesController extends Controller {
                 }
             }
             $page->delete();
+
+            Revision::create([
+                'table' => 'pages',
+                'action' => 'deleted',
+                'content_id' => $id,
+                'content' => null,
+                'created_at' => now(),
+                'user_id' => $request->user()->id
+            ]);
+
             $request->session()->flash('alert-success', 'Strona została usunęta');
         } catch (\Exception $e) {
             $request->session()->flash('alert-error', 'Error: ' . $e->getMessage());

@@ -24,6 +24,13 @@
                 </editor>
             @endif
         </div>
+        <div class="row">
+            <div class="col-12 mt-2">
+                @include('RevisionModule::revisions', [
+                    'revisions' => $revisions ?? null
+                ])
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -34,5 +41,6 @@
     @javascript('infoUrl', route('MediaManager::media.image.info', ['media' => '%%id%%']))
     <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@13.0.1/dist/lazyload.min.js"></script>
     <script src="{{ mix('vendor/js/MediaManager.js') }}"></script>
+    <script src="{{ mix('vendor/js/RevisionModule.js') }}"></script>
     <script src="{{ mix('vendor/js/PagesModule.js') }}"></script>
 @endsection

@@ -7,8 +7,8 @@
         <div class="card mb-2">
 
             <div class="card-header clearfix">
-                <h4 v-if="_id" class="card-title float-left">Edytowanie strony</h4>
-                <h4 v-else class="card-title float-left">Dodawanie nowej strony</h4>
+                <h4 v-if="_id" class="card-title float-left"><i class="mdi mdi-pencil"></i> Edytowanie strony</h4>
+                <h4 v-else class="card-title float-left"><i class="mdi mdi-plus"></i> Dodawanie nowej strony</h4>
                 <div class="float-right">
                     <a v-if="_id" :href="obj.permalink" target="_blank" class="btn btn-info">
                         <i class="mdi mdi-open-in-new"></i> Preview
@@ -75,7 +75,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h4>Hiro</h4>
+                <h4><i class="mdi mdi-image"></i> Hero</h4>
             </div>
 
             <div class="card-body">
