@@ -58,6 +58,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Lead</label>
+                        <textarea rows="7" class="form-control" name="lead" placeholder="Wpisz lead" v-model.lazy="obj.lead"/>
+                    </div>
+
+                    <div class="form-group">
                         <label>Content</label>
                         <ckeditor :editor="editor" v-model="obj.content" :config="editorConfig"></ckeditor>
                     </div>
@@ -134,6 +139,7 @@
                 obj: {
                     id: 0,
                     name: '',
+                    lead: '',
                     content: '',
                     permalink: '/',
                     status: {id: 'draft', name: 'DRAFT'},
@@ -289,6 +295,10 @@
                     axios.get('/dashboard/pages/get?id=' + self._id)
                         .then(res => {
                             self.obj = res.data;
+
+                            if (typeof self.obj.lead === 'undefined') {
+                                self.obj.lead = '';
+                            }
 
                             if (typeof self.obj.hiro_video === 'undefined') {
                                 self.obj.hiro_video = '';

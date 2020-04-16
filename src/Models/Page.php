@@ -21,6 +21,7 @@ class Page extends Model
         'type',
         'image',
         'name',
+        'lead',
         'content',
         'parent',
         'hiro_video',

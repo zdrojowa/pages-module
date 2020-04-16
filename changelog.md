@@ -28,3 +28,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.2.0
 - add revisions
+
+## Version 1.2.1
+- add lead
