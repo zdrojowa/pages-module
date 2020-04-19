@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Selene\Modules\DashboardModule\ZdrojowaTable;
 use Selene\Modules\LanguageModule\Models\Language;
+use Selene\Modules\MenuModule\Models\Menu;
 use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Models\Translation;
 use Selene\Modules\PagesModule\Support\Status;
@@ -262,8 +263,9 @@ class PagesController extends Controller {
         }
 
         return view($page->type, [
-            'page' => $page,
-            'settings' => Setting::getAllByKey()
+            'page'     => $page,
+            'settings' => Setting::getAllByKey(),
+            'menu'     => Menu::getByLang($page->lang)
         ]);
     }
 }
