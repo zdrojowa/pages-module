@@ -34,3 +34,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.3.0
 - add menu
+
+## Version 1.3.1
+- change menu if page changes

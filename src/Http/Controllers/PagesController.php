@@ -110,6 +110,7 @@ class PagesController extends Controller {
     public function update(Request $request, Page $page) {
 
         if ($this->save($request, $page)) {
+            Menu::changeMenu($page, Menu::ACTION_UPDATE);
             $request->session()->flash('alert-success', 'Strona została zaktualizowana');
         } else {
             $request->session()->flash('alert-error', 'Ooops. Try again.');
@@ -177,21 +178,26 @@ class PagesController extends Controller {
         return $page;
     }
 
-    public function destroy(Page $page, Request $request): void
+    public function destroy(Page $page, Request $request)
     {
         try {
 
             $id = $page->_id;
 
-            $translations = array_diff(json_decode($page->translations, true), [$page->_id]);
+            if (!empty($page->translations)) {
+                $translations = array_diff(json_decode($page->translations, true), [$page->_id]);
 
-            foreach ($translations as $id) {
-                $translation = Page::where('_id', '=', $id)->first();
-                if ($translation) {
-                    $translation->translations = json_encode(array_values(array_diff($translations, [$id])));
-                    $translation->save();
+                foreach ($translations as $id) {
+                    $translation = Page::where('_id', '=', $id)->first();
+                    if ($translation) {
+                        $translation->translations = json_encode(array_values(array_diff($translations, [$id])));
+                        $translation->save();
+                    }
                 }
             }
+
+            Menu::changeMenu($page, Menu::ACTION_DELETE);
+
             $page->delete();
 
             Revision::create([
