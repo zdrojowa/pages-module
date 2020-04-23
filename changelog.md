@@ -37,3 +37,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.3.1
 - change menu if page changes
+
+## Version 1.3.2
+- auto-update menu, menu revision

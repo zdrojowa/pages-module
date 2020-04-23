@@ -88,11 +88,7 @@ class PagesController extends Controller {
         return view('PagesModule::edit', [
             'page'      => $page,
             'lang'      => $page->lang,
-            'revisions' => Revision::query()->where('table', '=', 'pages')
-                ->where('content_id', '=', $page->_id)
-                ->orderByDesc('_id')
-                ->limit(50)
-                ->get()
+            'revisions' => Revision::getByContent('pages', $page->_id, 10)
         ]);
     }
 
@@ -110,7 +106,7 @@ class PagesController extends Controller {
     public function update(Request $request, Page $page) {
 
         if ($this->save($request, $page)) {
-            Menu::changeMenu($page, Menu::ACTION_UPDATE);
+            Menu::changeMenu($page, Menu::ACTION_UPDATE, $request->user()->id);
             $request->session()->flash('alert-success', 'Strona została zaktualizowana');
         } else {
             $request->session()->flash('alert-error', 'Ooops. Try again.');
@@ -196,7 +192,9 @@ class PagesController extends Controller {
                 }
             }
 
-            Menu::changeMenu($page, Menu::ACTION_DELETE);
+            $userId = $request->user()->id;
+
+            Menu::changeMenu($page, Menu::ACTION_DELETE, $userId);
 
             $page->delete();
 
@@ -206,7 +204,7 @@ class PagesController extends Controller {
                 'content_id' => $id,
                 'content' => null,
                 'created_at' => now(),
-                'user_id' => $request->user()->id
+                'user_id' => $userId
             ]);
 
             $request->session()->flash('alert-success', 'Strona została usunęta');
