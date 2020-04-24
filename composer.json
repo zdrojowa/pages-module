@@ -11,6 +11,8 @@
     "homepage": "https://github.com/zdrojowa/pages-module",
     "keywords": ["PagesModule", "Laravel", "Vue"],
     "require": {
+        "ext-json": "*",
+        "jenssegers/mongodb": "*",
         "zdrojowa/cms-kernel": "^2.0",
         "zdrojowa/dashboardmodule": "^1.1",
         "zdrojowa/language-module": "^1.0",

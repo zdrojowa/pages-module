@@ -26,7 +26,8 @@ class Page extends Model
         'parent',
         'hiro_video',
         'hiro_images',
-        'translations'
+        'translations',
+        'object'
     ];
 
     public function getTranslations() {
@@ -40,5 +41,9 @@ class Page extends Model
             }
         }
         return $translations;
+    }
+    
+    public function getType() {
+        return Type::query()->where('template', '=', $this->type)->first();
     }
 }

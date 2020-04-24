@@ -40,3 +40,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 1.3.2
 - auto-update menu, menu revision
+
+## Version 2.0.0
+- add pages types

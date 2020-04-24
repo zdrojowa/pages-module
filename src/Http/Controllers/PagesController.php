@@ -12,7 +12,6 @@ use Selene\Modules\MenuModule\Models\Menu;
 use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Models\Translation;
 use Selene\Modules\PagesModule\Support\Status;
-use Selene\Modules\PagesModule\Support\Type;
 use Selene\Modules\RevisionModule\Models\Revision;
 use Selene\Modules\RevisionModule\Support\Action;
 use Selene\Modules\SettingsModule\Models\Setting;
@@ -122,7 +121,8 @@ class PagesController extends Controller {
         $obj['status'] = $obj['status']['id'];
         $obj['parent'] = $obj['parent']['id'];
         $obj['lang']   = $obj['lang']['key'];
-        $obj['type']   = $obj['type']['id'];
+        $obj['type']   = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
+        $obj['object'] = $obj['object']['id'] ?? null;
 
         $request->merge($obj);
 
@@ -222,15 +222,6 @@ class PagesController extends Controller {
         return response()->json($statuses);
     }
 
-    public function types(): JsonResponse
-    {
-        $types = [];
-        foreach (Type::toArray() as $key => $value) {
-            $types[] = ['id' => $value, 'name' => $key];
-        }
-        return response()->json($types);
-    }
-
     public function check($id, Request $request): JsonResponse
     {
         $pages = Page::query()->where('_id', '!=', $id);
@@ -243,6 +234,37 @@ class PagesController extends Controller {
 
     public function addTranslation(Page $page, $lang) {
         return view('PagesModule::edit', ['page' => $page, 'lang' => $lang]);
+    }
+
+    public function getObjects(Request $request) {
+
+        if (!$request->has('table')) {
+            return response()->json([]);
+        }
+
+        $objects = \DB::connection('mongodb')
+            ->collection($request->get('table'))
+            ->limit(10)
+            ->orderBy('_id');
+
+        if ($request->has('query')) {
+            $query = $request->get('query', '');
+
+            if (!empty($query)) {
+                $objects->where('name', 'like', '%' . $query . '%')
+                    ->orWhere('_id', '=', $query);
+            }
+        }
+
+        $items = [];
+        foreach ($objects->get() as $object) {
+            $items[] = [
+                'id'   => (string) $object['_id'],
+                'name' => $object['name']
+            ];
+        }
+
+        return response()->json($items);
     }
 
     public function page(Request $request, $permalink = '/') {
@@ -266,10 +288,21 @@ class PagesController extends Controller {
             abort(404);
         }
 
+        $object = null;
+
+        $type = $page->getType();
+        if ($type->table) {
+            $object = \DB::connection('mongodb')
+                ->collection($type->table)
+                ->where('_id', '=', $page->object)
+                ->first();
+        }
+
         return view($page->type, [
-            'page'     => $page,
-            'settings' => Setting::getAllByKey(),
-            'menu'     => Menu::getByLang($page->lang)
+            'page'      => $page,
+            'settings'  => Setting::getAllByKey(),
+            'menu'      => Menu::getByLang($page->lang),
+            $page->type => $object
         ]);
     }
 }

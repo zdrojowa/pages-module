@@ -38,7 +38,14 @@
 
                     <div class="form-group">
                         <label>Typ</label>
-                        <multiselect v-model.lazy="obj.type" track-by="id" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
+                        <multiselect v-model.lazy="obj.type" track-by="template" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
+                    </div>
+
+                    <div v-if="hasModel" class="form-group">
+                        <label>{{ obj.type.text }}</label>
+                        <multiselect v-model.lazy="obj.object" track-by="id" label="name" placeholder="Zaczni pisać" :options="objects" :searchable="true" @search-change="getObjects">
+                            <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
+                        </multiselect>
                     </div>
 
                     <div class="form-group">
@@ -136,6 +143,7 @@
                 langs: [],
                 mainLang: 'pl',
                 types: [],
+                objects: [],
                 obj: {
                     id: 0,
                     name: '',
@@ -146,9 +154,10 @@
                     image: '',
                     parent: this.defaultParent,
                     lang: {key: 'pl', name: 'Polski'},
-                    type: {id: 'main', name: 'MAIN'},
+                    type: null,
                     hiro_video: '',
-                    hiro_images: []
+                    hiro_images: [],
+                    object: null
                 },
                 errors: {
                     name: {},
@@ -158,18 +167,36 @@
             };
         },
 
-        created: function() {
+        created() {
             this.getStatuses();
         },
 
         computed: {
 
-            url: function () {
+            url() {
                 return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store';
+            },
+
+            hasModel() {console.log(this.obj.type);
+                return this.obj.type != null && this.obj.type.table;
             }
         },
 
         methods: {
+
+            getObjects(query) {
+                axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table + '&query=' + query)
+                    .then(res => {
+                        this.objects = [];
+                        res.data.forEach(item => {
+                            this.objects.push(item);
+                        });
+
+                        this.obj.object = this.getItem(this.objects, 'id', this.obj.object);
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
 
             removeImage: function(position) {
                 this.obj.hiro_images.splice(position, 1);
@@ -211,7 +238,7 @@
             },
 
             getTypes: function() {
-                axios.get('/dashboard/pages/types')
+                axios.get('/dashboard/pages-types/get')
                     .then(res => {
                         this.types = res.data;
                         this.getPage();
@@ -309,7 +336,7 @@
                             }
 
                             self.obj.status = self.getItem(self.statuses, 'id', self.obj.status);
-                            self.obj.type   = self.getItem(self.types, 'id', self.obj.type);
+                            self.obj.type   = self.getItem(self.types, 'template', self.obj.type);
 
                             self.slug = self.getSlug();
 
@@ -319,6 +346,10 @@
                                 self.obj.parent = this.defaultParent;
                             }
                             self.obj.lang = self.getItem(self.langs, 'key', self.obj.lang);
+
+                            if (self.hasModel && self.obj.object != null) {
+                                self.getObjects(self.obj.object);
+                            }
 
                             self.getParents(self.obj.parent);
 
@@ -408,7 +439,7 @@
         },
 
         watch: {
-            'obj.name': function() {
+            'obj.name'() {
                 if (!this.obj.name) {
                     this.errors.name = ['To pole jest wymagane'];
                 } else {
@@ -418,12 +449,12 @@
                 }
             },
 
-            'obj.parent': function() {
+            'obj.parent'() {
                 this.setPermalink();
                 this.checkPermalinkUnique();
             },
 
-            'slug': function() {
+            'slug'() {
                 this.setPermalink();
                 this.checkPermalinkUnique();
             }

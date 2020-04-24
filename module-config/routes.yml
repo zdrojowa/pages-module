@@ -56,13 +56,6 @@ statuses:
     - GET
   permission: PagesModule.pages
 
-types:
-  path: /dashboard/pages/types
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@types
-  methods:
-    - GET
-  permission: PagesModule.pages
-
 check:
   path: /dashboard/pages/check/{{id}}
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@check
@@ -73,6 +66,71 @@ check:
 addTranslation:
   path: /dashboard/pages/add-translation/{{page}}/{lang}
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@addTranslation
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+getObjects:
+  path: /dashboard/pages/getObjects
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@getObjects
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+types:
+  path: /dashboard/pages-types
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@index
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+getTypes:
+  path: /dashboard/pages-types/get
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@get
+  methods:
+    - GET
+    - POST
+  permission: PagesModule.pages
+
+addType:
+  path: /dashboard/pages-types/add
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@add
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+storeType:
+  path: /dashboard/pages-types/store
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@store
+  methods:
+    - POST
+  permission: PagesModule.pages
+
+editType:
+  path: /dashboard/pages-types/{{type}}/edit
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@edit
+  methods:
+    - GET
+  permission: PagesModule.pages
+
+updateType:
+  path: /dashboard/pages-types/{{type}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@update
+  methods:
+    - PUT
+    - PATCH
+  permission: PagesModule.pages
+
+destroyType:
+  path: /dashboard/pages-types/destroy/{{type}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@destroy
+  methods:
+    - DELETE
+  permission: PagesModule.pages
+
+checkType:
+  path: /dashboard/pages-types/check/{{id}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@check
   methods:
     - GET
   permission: PagesModule.pages
