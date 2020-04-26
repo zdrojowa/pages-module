@@ -4,6 +4,7 @@
 
 @section('stylesheets')
     <link rel="stylesheet" href="{{ mix('vendor/css/MediaManager.css','') }}">
+    <link rel="stylesheet" href="{{ mix('vendor/css/RevisionModule.css','') }}">
     <link rel="stylesheet" href="{{ mix('vendor/css/PagesModule.css','') }}">
 @endsection
 
@@ -18,18 +19,19 @@
                 <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
                     {{ csrf_field() }}
                 </editor>
+                <div class="row">
+                    <div class="col-12 mt-2">
+                        @include('RevisionModule::revisions', [
+                            'table'      => 'pages',
+                            'content_id' => $page->id
+                        ])
+                    </div>
+                </div>
             @else
                 <editor :_id="0">
                     {{ csrf_field() }}
                 </editor>
             @endif
-        </div>
-        <div class="row">
-            <div class="col-12 mt-2">
-                @include('RevisionModule::revisions', [
-                    'revisions' => $revisions ?? null
-                ])
-            </div>
         </div>
     </div>
 @endsection

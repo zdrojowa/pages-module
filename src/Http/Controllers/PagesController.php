@@ -85,9 +85,8 @@ class PagesController extends Controller {
 
     public function edit(Page $page) {
         return view('PagesModule::edit', [
-            'page'      => $page,
-            'lang'      => $page->lang,
-            'revisions' => Revision::getByContent('pages', $page->_id, 10)
+            'page' => $page,
+            'lang' => $page->lang
         ]);
     }
 

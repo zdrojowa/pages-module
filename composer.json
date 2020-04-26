@@ -17,7 +17,7 @@
         "zdrojowa/dashboardmodule": "^1.1",
         "zdrojowa/language-module": "^1.0",
         "zdrojowa/settings-module": "^1.0",
-        "zdrojowa/revision-module": "^1.0",
+        "zdrojowa/revision-module": "^1.1",
         "zdrojowa/menu-module": "^2.0"
     },
     "require-dev": {
