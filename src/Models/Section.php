@@ -32,4 +32,20 @@ class Section extends Model
     public function getType() {
         return Type::query()->where('template', '=', $this->type)->first();
     }
+
+    public function getPages() {
+        $type  = $this->getType();
+        $pages = Pages::query()
+            ->where('lang', '=', $this->lang)
+            ->where('type', '=', $type->template)
+            ->orderByDesc('updated_at')
+            ->limit($this->count >> 0);
+
+
+        if ($type->table) {
+            $pages->whereNotNull('object');
+        }
+
+        return $pages->get();
+    }
 }

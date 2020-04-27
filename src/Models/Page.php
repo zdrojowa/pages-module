@@ -48,6 +48,17 @@ class Page extends Model
         return Type::query()->where('template', '=', $this->type)->first();
     }
 
+    public function getObject() {
+        $type = $this->getType();
+        if ($type->table) {
+            return \DB::connection('mongodb')
+                ->collection($type->table)
+                ->where('_id', '=', $this->object)
+                ->first();
+        }
+        return null;
+    }
+
     public function getSections() {
         $sections = [];
         if (!empty($this->sections)) {

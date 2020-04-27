@@ -293,21 +293,10 @@ class PagesController extends Controller {
             abort(404);
         }
 
-        $object = null;
-
-        $type = $page->getType();
-        if ($type->table) {
-            $object = \DB::connection('mongodb')
-                ->collection($type->table)
-                ->where('_id', '=', $page->object)
-                ->first();
-        }
-
         return view($page->type, [
             'page'      => $page,
             'settings'  => Setting::getAllByKey(),
-            'menu'      => Menu::getByLang($page->lang),
-            $page->type => $object
+            'menu'      => Menu::getByLang($page->lang)
         ]);
     }
 }
