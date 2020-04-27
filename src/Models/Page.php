@@ -47,4 +47,21 @@ class Page extends Model
     public function getType() {
         return Type::query()->where('template', '=', $this->type)->first();
     }
+
+    public function getSections() {
+        $sections = [];
+        if (!empty($this->sections)) {
+            foreach (json_decode($this->sections) as $item) {
+                $section = Section::query()->where('_id', '=', $item->id)->first();
+                if ($section) {
+                    $sections[] = [
+                        'section' => $section,
+                        'name'    => $item->name,
+                        'label'   => $item->label,
+                    ];
+                }
+            }
+        }
+        return $sections;
+    }
 }
