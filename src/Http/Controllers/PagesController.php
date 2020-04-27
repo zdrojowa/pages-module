@@ -115,15 +115,21 @@ class PagesController extends Controller {
 
     private function save(Request $request, Page $page = null) :? Page
     {
-        $obj = json_decode($request->get('obj'), true, 512, JSON_THROW_ON_ERROR);
+        if ($request->has('obj')) {
+            $obj = json_decode($request->get('obj'), true, 512, JSON_THROW_ON_ERROR);
 
-        $obj['status'] = $obj['status']['id'];
-        $obj['parent'] = $obj['parent']['id'];
-        $obj['lang']   = $obj['lang']['key'];
-        $obj['type']   = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
-        $obj['object'] = $obj['object']['id'] ?? null;
+            $obj['status'] = $obj['status']['id'];
+            $obj['parent'] = $obj['parent']['id'];
+            $obj['lang'] = $obj['lang']['key'];
+            $obj['type'] = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
+            $obj['object'] = $obj['object']['id'] ?? null;
 
-        $request->merge($obj);
+            if ($page !== null) {
+                unset($obj['hiro_video'], $obj['hiro_images']);
+            }
+
+            $request->merge($obj);
+        }
 
         $action = 'updated';
         if ($page === null) {
@@ -232,7 +238,7 @@ class PagesController extends Controller {
     }
 
     public function addTranslation(Page $page, $lang) {
-        return view('PagesModule::edit', ['page' => $page, 'lang' => $lang]);
+        return view('PagesModule::edit', ['page' => $page, 'lang' => $lang, 'new' => true]);
     }
 
     public function getObjects(Request $request) {

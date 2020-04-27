@@ -46,3 +46,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 2.0.1
 - new revisions
+
+## Version 3.0.0
+- add sections

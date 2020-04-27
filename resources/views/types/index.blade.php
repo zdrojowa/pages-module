@@ -46,7 +46,7 @@
                     orderable: true,
                 },
                 {
-                    name: 'Tablica',
+                    name: 'Tabela',
                     type: 'text',
                     ajax: 'table',
                     orderable: true

@@ -11,3 +11,7 @@ pages:
       name: Typy
       permission: PagesModule.pages
       route: PagesModule::types
+    sections:
+      name: Sekcje
+      permission: PagesModule.pages
+      route: PagesModule::sections

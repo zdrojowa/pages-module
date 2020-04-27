@@ -19,14 +19,25 @@
                 <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
                     {{ csrf_field() }}
                 </editor>
-                <div class="row">
-                    <div class="col-12 mt-2">
-                        @include('RevisionModule::revisions', [
-                            'table'      => 'pages',
-                            'content_id' => $page->id
-                        ])
+
+                @if(!isset($new))
+                    <hiro :_id=`{{ $page->_id }}`>
+                        {{ csrf_field() }}
+                    </hiro>
+
+                    <page-section :id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
+                        {{ csrf_field() }}
+                    </page-section>
+
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            @include('RevisionModule::revisions', [
+                                'table'      => 'pages',
+                                'content_id' => $page->id
+                            ])
+                        </div>
                     </div>
-                </div>
+                @endif
             @else
                 <editor :_id="0">
                     {{ csrf_field() }}

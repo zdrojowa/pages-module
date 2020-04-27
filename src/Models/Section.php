@@ -4,40 +4,25 @@ namespace Selene\Modules\PagesModule\Models;
 
 use Jenssegers\Mongodb\Eloquent\Model;
 
-class Page extends Model
+class Section extends Model
 {
     protected $connection = 'mongodb';
-    protected $collection = 'pages';
+    protected $collection = 'sections';
 
     protected $appends = ['id'];
     protected $hidden  = ['_id'];
 
     protected $primaryKey = '_id';
 
-    protected $fillable = [
-        'status',
-        'permalink',
-        'lang',
-        'type',
-        'image',
-        'name',
-        'lead',
-        'content',
-        'parent',
-        'hiro_video',
-        'hiro_images',
-        'translations',
-        'object',
-        'sections'
-    ];
+    protected $fillable = ['name', 'lang', 'template', 'type', 'count', 'translations'];
 
     public function getTranslations() {
         $translations = [];
         if (!empty($this->translations)) {
             foreach (json_decode($this->translations) as $id) {
-                $page = self::query()->where('_id', '=', $id)->first();
-                if ($page) {
-                    $translations[$page->lang] = $page->id;
+                $item = self::query()->where('_id', '=', $id)->first();
+                if ($item) {
+                    $translations[$item->lang] = $item->id;
                 }
             }
         }

@@ -84,42 +84,6 @@
 
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h4><i class="mdi mdi-image"></i> Hero</h4>
-            </div>
-
-            <div class="card-body">
-
-                <div class="form-group">
-                    <label>Video</label>
-                    <media-selector extensions="3gp,3g2,asf,wmv,avi,divx,evo,f4v,flv,mp4,mpg,mpeg" @media-selected="selectVideo"></media-selector>
-
-                    <a v-if="obj.hiro_video" :href="obj.hiro_video" target="_blank">
-                        <button @click="removeVideo" class="btn-danger" type="button">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                        <div class="thumbnail">
-                            <i class="mdi mdi-file-video-outline text-white"></i>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="form-group">
-                    <label>Images</label>
-                    <media-selector extensions="jpg,jpeg,png" @media-selected="selectImages"></media-selector>
-                    <div class="img-preview">
-                        <div v-for="(image ,i) in obj.hiro_images" :key="i"  class="thumbnail-img">
-                            <button @click="removeImage(i)" class="btn-danger" type="button">
-                                <i class="mdi mdi-delete"></i>
-                            </button>
-                            <img :src="image"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </form>
 </template>
 
@@ -155,8 +119,6 @@
                     parent: this.defaultParent,
                     lang: {key: 'pl', name: 'Polski'},
                     type: null,
-                    hiro_video: '',
-                    hiro_images: [],
                     object: null
                 },
                 errors: {
@@ -177,7 +139,7 @@
                 return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store';
             },
 
-            hasModel() {console.log(this.obj.type);
+            hasModel() {
                 return this.obj.type != null && this.obj.type.table;
             }
         },
@@ -198,26 +160,8 @@
                 })
             },
 
-            removeImage: function(position) {
-                this.obj.hiro_images.splice(position, 1);
-            },
-
-            removeVideo: function(position) {
-                this.obj.hiro_video = '';
-            },
-
-            selectVideo: function(url) {
-                this.obj.hiro_video = url;
-                this.$forceUpdate();
-            },
-
             selectImage: function(url) {
                 this.obj.image = url;
-                this.$forceUpdate();
-            },
-
-            selectImages: function(url) {
-                this.obj.hiro_images.push(url);
                 this.$forceUpdate();
             },
 
@@ -325,14 +269,6 @@
 
                             if (typeof self.obj.lead === 'undefined') {
                                 self.obj.lead = '';
-                            }
-
-                            if (typeof self.obj.hiro_video === 'undefined') {
-                                self.obj.hiro_video = '';
-                            }
-
-                            if (typeof self.obj.hiro_images === 'undefined') {
-                                self.obj.hiro_images = [];
                             }
 
                             self.obj.status = self.getItem(self.statuses, 'id', self.obj.status);
