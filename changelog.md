@@ -58,3 +58,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.0.3
 - sections without language
+
+## Version 3.0.4
+- bugfix type

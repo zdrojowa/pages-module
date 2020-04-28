@@ -36,8 +36,8 @@
                         <label title="To nazwa tabeli z bazy danych. W tej tabeli będziemy szukac objektu przy edytowaniu strony">
                             Tabela <i class="mdi mdi-help-circle"></i>
                         </label>
-                        <input type="text" :class="getInputClass('table')" name="table" v-model.lazy="table">
-                        <small v-if="hasError('table')" class="error mt-2 text-danger">{{ errors.table[0] }}</small>
+                        <input type="text" :class="getInputClass('table_name')" name="table_name" v-model.lazy="table_name">
+                        <small v-if="hasError('table_name')" class="error mt-2 text-danger">{{ errors.table_name[0] }}</small>
                     </div>
                 </div>
 
@@ -65,12 +65,12 @@
             return {
                 name: '',
                 template: '',
-                table: '',
+                table_name: '',
                 text: '',
                 errors: {
                     name: {},
                     template: {},
-                    table: {},
+                    table_name: {},
                 }
             };
         },
@@ -109,12 +109,11 @@
                 if (self._id) {
                     axios.get('/dashboard/pages-types/get?id=' + self._id)
                         .then(res => {
-                            self.id       = res.data.id;
-                            self.name     = res.data.name;
-                            self.template = res.data.template;
-                            self.table    = res.data.table;
-                            self.text     = res.data.text;
-
+                            self.id         = res.data.id;
+                            self.name       = res.data.name;
+                            self.template   = res.data.template;
+                            self.table_name = res.data.table_name;
+                            self.text       = res.data.text;
                         }).catch(err => {
                             console.log(err)
                     })
@@ -137,7 +136,7 @@
                         formData.append('_method', this._id ? 'PUT' : 'POST');
                         formData.append('name', this.name);
                         formData.append('template', this.template);
-                        formData.append('table', this.table);
+                        formData.append('table_name', this.table_name);
                         formData.append('text', this.text);
 
                         axios.post(this.url, formData, {
@@ -189,9 +188,9 @@
                 }
             },
 
-            table() {
-                if (this.table) {
-                    this.check('table');
+            table_name() {
+                if (this.table_name) {
+                    this.check('table_name');
                 }
             }
         }

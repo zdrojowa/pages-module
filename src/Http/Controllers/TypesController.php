@@ -90,8 +90,8 @@ class TypesController extends Controller {
 
     public function check($id, Request $request): JsonResponse
     {
-        if ($request->has('table')) {
-            return response()->json(Schema::connection('mongodb')->hasCollection($request->get('table')));
+        if ($request->has('table_name')) {
+            return response()->json(Schema::connection('mongodb')->hasCollection($request->get('table_name')));
         }
 
         $types = Type::query()->where('_id', '!=', $id);

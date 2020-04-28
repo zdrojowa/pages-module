@@ -4,11 +4,11 @@
         <input v-if="_id" type="hidden" name="translation" :value="_id">
 
         <b-nav align="right">
-            <b-nav-item v-if="_id">
+            <b-nav-text v-if="_id">
                 <a :href="obj.permalink" target="_blank" class="btn btn-info">
                     <i class="mdi mdi-open-in-new"></i> Podgląd
                 </a>
-            </b-nav-item>
+            </b-nav-text>
             <b-nav-item>
                 <b-button type="button" variant="primary" @click="validate">Zapisz</b-button>
             </b-nav-item>
@@ -136,14 +136,14 @@
             },
 
             hasModel() {
-                return this.obj.type != null && this.obj.type.table;
+                return this.obj.type != null && this.obj.type.table_name;
             }
         },
 
         methods: {
 
             getObjects(query) {
-                axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table + '&query=' + query)
+                axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table_name + '&query=' + query)
                     .then(res => {
                         this.objects = [];
                         res.data.forEach(item => {

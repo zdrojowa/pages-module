@@ -14,5 +14,5 @@ class Type extends Model
 
     protected $primaryKey = '_id';
 
-    protected $fillable = ['name', 'template', 'table', 'text'];
+    protected $fillable = ['name', 'template', 'table_name', 'text'];
 }

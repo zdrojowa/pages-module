@@ -48,7 +48,7 @@
                 {
                     name: 'Tabela',
                     type: 'text',
-                    ajax: 'table',
+                    ajax: 'table_name',
                     orderable: true
                 },
                 {

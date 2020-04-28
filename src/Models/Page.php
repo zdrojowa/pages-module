@@ -50,9 +50,9 @@ class Page extends Model
 
     public function getObject() {
         $type = $this->getType();
-        if ($type->table) {
+        if ($type->table_name) {
             return \DB::connection('mongodb')
-                ->collection($type->table)
+                ->collection($type->table_name)
                 ->where('_id', '=', $this->object)
                 ->first();
         }
