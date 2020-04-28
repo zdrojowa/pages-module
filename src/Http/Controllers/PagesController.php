@@ -80,13 +80,14 @@ class PagesController extends Controller {
     }
 
     public function add() {
-        return view('PagesModule::edit');
+        return view('PagesModule::edit', ['new' => true]);
     }
 
     public function edit(Page $page) {
         return view('PagesModule::edit', [
             'page' => $page,
-            'lang' => $page->lang
+            'lang' => $page->lang,
+            'new'  => false
         ]);
     }
 
@@ -120,15 +121,21 @@ class PagesController extends Controller {
 
             $obj['status'] = $obj['status']['id'];
             $obj['parent'] = $obj['parent']['id'];
-            $obj['lang'] = $obj['lang']['key'];
-            $obj['type'] = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
+            $obj['lang']   = $obj['lang']['key'];
+            $obj['type']   = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
             $obj['object'] = $obj['object']['id'] ?? null;
 
             if ($page !== null) {
-                unset($obj['hiro_video'], $obj['hiro_images']);
+                unset($obj['hiro_video'], $obj['hiro_images'], $obj['sections']);
             }
 
             $request->merge($obj);
+        }
+
+        if ($request->has('sections')) {
+            $request->merge([
+                'sections' => json_decode($request->get('sections'), true, 512, JSON_THROW_ON_ERROR)
+            ]);
         }
 
         $action = 'updated';

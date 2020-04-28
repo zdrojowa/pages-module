@@ -1,46 +1,54 @@
 <template>
     <div>
-
         <slot></slot>
 
-        <div class="card mb-2">
-            <div class="card-header">
-                <h4><i class="mdi mdi-image"></i> Hiro</h4>
-            </div>
+        <b-nav align="right">
+            <b-nav-item>
+                <b-button type="bytton" variant="primary" @click="save">Zapisz</b-button>
+            </b-nav-item>
+        </b-nav>
 
-            <div class="card-body row">
+        <div class="row">
 
-                <div class="form-group col-lg-4">
-                    <label>Video</label>
+            <b-form-group label="Video">
+                <media-selector extensions="3gp,3g2,asf,wmv,avi,divx,evo,f4v,flv,mp4,mpg,mpeg" @media-selected="selectVideo"></media-selector>
 
-                    <media-selector extensions="3gp,3g2,asf,wmv,avi,divx,evo,f4v,flv,mp4,mpg,mpeg" @media-selected="selectVideo"></media-selector>
+                <b-button type="button" @click="removeVideo" variant="danger">
+                    <b-icon-trash></b-icon-trash>
+                </b-button>
+            </b-form-group>
 
-                    <button @click="removeVideo" class="btn-danger" type="button">
-                        <i class="mdi mdi-delete"></i>
-                    </button>
+            <b-container v-if="hiro_video" fluid class="p-4 bg-dark">
+                <b-embed type="video" aspect="4by3" controls poster="poster.png">
+                    <source :src="hiro_video" type="video/webm">
+                    <source :src="hiro_video" type="video/mp4">
+                </b-embed>
+<!--                <b-row>-->
+<!--                    <b-col>-->
+<!--                        <a v-if="hiro_video" :href="hiro_video" target="_blank">-->
+<!--                            <div class="thumbnail">-->
+<!--                                <i class="mdi mdi-file-video-outline text-white"></i>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </b-col>-->
+<!--                </b-row>-->
+            </b-container>
+        </div>
 
-                    <a v-if="hiro_video" :href="hiro_video" target="_blank">
-                        <div class="thumbnail">
-                            <i class="mdi mdi-file-video-outline text-white"></i>
-                        </div>
-                    </a>
+        <div class="row">
+
+            <b-form-group label="Slides">
+                <media-selector extensions="jpg,jpeg,png" @media-selected="selectImages"></media-selector>
+            </b-form-group>
+
+            <b-container fluid class="p-4 bg-dark d-flex">
+                <div v-for="(image ,i) in hiro_images" :key="i" class="thumbnail-img">
+                    <b-img thumbnail fluid :src="image"></b-img>
+                    <b-button type="button" @click="removeImage(i)" variant="danger">
+                        <b-icon-trash></b-icon-trash>
+                    </b-button>
                 </div>
-
-                <div class="form-group col-lg-8">
-                    <label>Images</label>
-
-                    <media-selector extensions="jpg,jpeg,png" @media-selected="selectImages"></media-selector>
-
-                    <div class="img-preview">
-                        <div v-for="(image ,i) in hiro_images" :key="i" class="thumbnail-img">
-                            <button @click="removeImage(i)" class="btn-danger" type="button">
-                                <i class="mdi mdi-delete"></i>
-                            </button>
-                            <img :src="image"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </b-container>
         </div>
     </div>
 </template>
@@ -73,22 +81,18 @@
 
             removeImage: function(position) {
                 this.hiro_images.splice(position, 1);
-                this.save();
             },
 
             removeVideo: function(position) {
                 this.hiro_video = '';
-                this.save();
             },
 
             selectVideo: function(url) {
                 this.hiro_video = url;
-                this.save();
             },
 
             selectImages: function(url) {
                 this.hiro_images.push(url);
-                this.save();
             },
 
             getHiro: function() {
@@ -126,7 +130,6 @@
                     }
                 })
                     .then(res => {
-                        // self.getHiro();
                     }).catch(err => {
                     console.log(err);
                 });

@@ -37,11 +37,6 @@
                 required: false,
                 type: String,
                 default: ''
-            },
-            lang: {
-                required: false,
-                type: String,
-                default: 'pl'
             }
         },
 
@@ -94,7 +89,7 @@
             },
 
             getSections: function(query) {
-                axios.get('/dashboard/pages-sections/get?query=' + query + '&lang=' + this.lang)
+                axios.get('/dashboard/pages-sections/get?query=' + query)
                     .then(res => {
                         this.sections = [];
 

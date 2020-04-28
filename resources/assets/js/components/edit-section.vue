@@ -16,7 +16,7 @@
             <div class="card-body">
 
                 <div class="row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label title="Służy do indentyfikacji sekcji a także pokazuje się przy edytowaniu strony w Module Stron - rozdział Sekcji">
                             Nazwa <i class="mdi mdi-help-circle"></i>
                         </label>
@@ -24,34 +24,30 @@
                         <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
                     </div>
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label title="To jest nazwa szablonu. Szablon z taką nazwą musi być w resources->views">
                             Szablon <i class="mdi mdi-help-circle"></i>
                         </label>
                         <input type="text" :class="getInputClass('template')" name="template" v-model.lazy="template">
                         <small v-if="hasError('template')" class="error mt-2 text-danger">{{ errors.template[0] }}</small>
                     </div>
-
-                    <div class="form-group col-md-4">
-                        <label title="Iłość stron w Sekcji">
-                            Iłość <i class="mdi mdi-help-circle"></i>
-                        </label>
-                        <input type="text" :class="getInputClass('template')" name="count" v-model.lazy="count">
-                        <small v-if="hasError('count')" class="error mt-2 text-danger">{{ errors.count[0] }}</small>
-                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-6">
-                        <label>Język</label>
-                        <multiselect v-model.lazy="lang" :options="langs" track-by="key" label="name" placeholder="Wybierz język"></multiselect>
-                    </div>
 
                     <div class="form-group col-md-6">
                         <label title="Typ stron które będą pokazywały się w Sekcji">
                             Typ <i class="mdi mdi-help-circle"></i>
                         </label>
                         <multiselect v-model.lazy="type" track-by="template" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label title="Iłość stron w Sekcji">
+                            Iłość <i class="mdi mdi-help-circle"></i>
+                        </label>
+                        <input type="text" :class="getInputClass('template')" name="count" v-model.lazy="count">
+                        <small v-if="hasError('count')" class="error mt-2 text-danger">{{ errors.count[0] }}</small>
                     </div>
                 </div>
 
@@ -64,7 +60,7 @@
 
     export default {
         name: 'edit-section',
-        props : ['_id', '_lang'],
+        props : ['_id'],
 
         data() {
             return {
@@ -72,20 +68,17 @@
                 template: '',
                 type: '',
                 count: 0,
-                lang: '',
                 errors: {
                     name: {},
                     template: {},
                     count: {},
                 },
-                langs: [],
                 types: [],
-                mainLang: 'pl'
             };
         },
 
         created() {
-            this.getLangs();
+            this.getTypes();
         },
 
         computed: {
@@ -137,28 +130,6 @@
                 })
             },
 
-            getMainLang: function() {
-                axios.get('/dashboard/settings/getByKey/lang')
-                    .then(res => {
-                        this.mainLang = res.data.value;
-                        this.lang     = this.getItem(this.langs, 'key', this.mainLang);
-                        this.getTypes();
-                    }).catch(err => {
-                    console.log(err);
-                    this.getTypes();
-                });
-            },
-
-            getLangs: function() {
-                axios.get('/dashboard/languages/get')
-                    .then(res => {
-                        this.langs = res.data;
-                        this.getMainLang();
-                    }).catch(err => {
-                    console.log(err)
-                })
-            },
-
             getSection() {
                 let self = this;
                 if (self._id) {
@@ -169,13 +140,6 @@
                             self.template = res.data.template;
                             self.count    = res.data.count;
                             self.type     = self.getItem(self.types, 'template', res.data.type);
-                            self.lang     = res.data.lang;
-
-                            if (self._lang !== self.lang) {
-                                self.lang = self._lang;
-                                self.id   = 0;
-                            }
-                            self.lang = self.getItem(self.langs, 'key', self.lang);
 
                         }).catch(err => {
                             console.log(err)
@@ -194,9 +158,7 @@
                     formData.append('name', this.name);
                     formData.append('template', this.template);
                     formData.append('count', this.count);
-                    formData.append('lang', this.lang.key);
                     formData.append('type', this.type.template);
-                    formData.append('translation', this._id);
 
                     axios.post(this.url, formData, {
                         headers: {

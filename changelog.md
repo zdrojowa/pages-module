@@ -55,3 +55,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.0.2
 - get object, get pages
+
+## Version 3.0.3
+- sections without language

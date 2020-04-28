@@ -1,29 +1,21 @@
 <template>
     <div>
-
         <slot></slot>
 
-        <div class="card">
+        <b-nav align="right">
+            <b-nav-item>
+                <b-button type="bytton" variant="success"v-b-modal="'0'">
+                    <b-icon-plus></b-icon-plus> Dodaj
+                </b-button>
+            </b-nav-item>
+            <b-nav-item>
+                <b-button type="bytton" variant="primary" @click="save">Zapisz</b-button>
+            </b-nav-item>
+        </b-nav>
 
-            <div class="card-header clearfix">
-                <h4 class="card-title float-left"><i class="mdi mdi-collage"></i> Sekcji</h4>
-                <div class="float-right">
-                    <b-button variant="success" v-b-modal="'0'"><i class="mdi mdi-plus"></i> Dodaj</b-button>
-                </div>
-            </div>
+        <nested v-model="sections"/>
 
-            <div class="card-body">
-                <nested v-model="sections" :lang="lang"/>
-            </div>
-
-            <div class="card-footer clearfix">
-                <div class="float-right">
-                    <b-button variant="primary" @click="save"><i class="mdi mdi-content-save"></i> Zapisz sekcje</b-button>
-                </div>
-            </div>
-        </div>
-
-        <modal id='0' :item="element" :lang="lang" @save="add"></modal>
+        <modal id='0' :item="element" @save="add"></modal>
     </div>
 </template>
 
@@ -35,11 +27,6 @@
             id: {
                 required: true,
                 type: String
-            },
-            lang: {
-                required: false,
-                type: String,
-                default: 'pl'
             }
         },
 
@@ -70,7 +57,7 @@
                         if (typeof res.data.sections == 'undefined') {
                             self.sections = [];
                         } else {
-                            self.sections = JSON.parse(res.data.sections);
+                            self.sections = res.data.sections;
                         }
                     }).catch(err => {
                     console.log(err)
@@ -93,9 +80,8 @@
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
-                })
-                    .then(res => {
-                    }).catch(err => {
+                }).then(res => {
+                }).catch(err => {
                     console.log(err);
                 });
             }

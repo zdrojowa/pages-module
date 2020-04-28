@@ -15,34 +15,51 @@
 @section('content')
     <div class="content-wrapper">
         <div id="app">
-            @if (isset($page))
-                <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
-                    {{ csrf_field() }}
-                </editor>
-
-                @if(!isset($new))
-                    <hiro :_id=`{{ $page->_id }}`>
-                        {{ csrf_field() }}
-                    </hiro>
-
-                    <page-section :id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
-                        {{ csrf_field() }}
-                    </page-section>
-
-                    <div class="row">
-                        <div class="col-12 mt-2">
+            <b-card no-body>
+                <b-tabs card>
+                    <b-tab active>
+                        <template v-slot:title>
+                            <b-icon-card-text></b-icon-card-text> Strona
+                        </template>
+                        @if (isset($page))
+                            <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
+                                {{ csrf_field() }}
+                            </editor>
+                        @else
+                            <editor :_id="0">
+                                {{ csrf_field() }}
+                            </editor>
+                        @endif
+                    </b-tab>
+                    @if(!$new)
+                        <b-tab>
+                            <template v-slot:title>
+                                <b-icon-image></b-icon-image> Hiro
+                            </template>
+                            <hiro :_id=`{{ $page->_id }}`>
+                                {{ csrf_field() }}
+                            </hiro>
+                        </b-tab>
+                        <b-tab>
+                            <template v-slot:title>
+                                <b-icon-columns></b-icon-columns> Sekcje
+                            </template>
+                            <page-section :id=`{{ $page->_id }}`>
+                                {{ csrf_field() }}
+                            </page-section>
+                        </b-tab>
+                        <b-tab>
+                            <template v-slot:title>
+                                <b-icon-clock-history></b-icon-clock-history> History
+                            </template>
                             @include('RevisionModule::revisions', [
-                                'table'      => 'pages',
-                                'content_id' => $page->id
-                            ])
-                        </div>
-                    </div>
-                @endif
-            @else
-                <editor :_id="0">
-                    {{ csrf_field() }}
-                </editor>
-            @endif
+                                    'table'      => 'pages',
+                                    'content_id' => $page->id
+                                ])
+                        </b-tab>
+                    @endif
+                </b-tabs>
+            </b-card>
         </div>
     </div>
 @endsection

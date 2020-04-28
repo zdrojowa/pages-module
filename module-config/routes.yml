@@ -186,13 +186,6 @@ destroySection:
     - DELETE
   permission: PagesModule.pages
 
-addSectionTranslation:
-  path: /dashboard/pages/add-section-translation/{{section}}/{lang}
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@addTranslation
-  methods:
-    - GET
-  permission: PagesModule.pages
-
 page:
   path: /{{slug}}
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@page

@@ -15,7 +15,7 @@
                         </b-button>
                     </div>
                 </div>
-                <modal :id="key(element)" :item="element" :lang="lang" @save="save(index, $event)"></modal>
+                <modal :id="key(element)" :item="element" @save="save(index, $event)"></modal>
             </div>
         </draggable>
     </div>
@@ -29,11 +29,6 @@
                 required: false,
                 type: Array,
                 default: null
-            },
-            lang: {
-                required: false,
-                type: String,
-                default: 'pl'
             }
         },
 

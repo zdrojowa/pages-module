@@ -62,17 +62,27 @@ class Page extends Model
     public function getSections() {
         $sections = [];
         if (!empty($this->sections)) {
-            foreach (json_decode($this->sections) as $item) {
-                $section = Section::query()->where('_id', '=', $item->id)->first();
+            foreach ($this->sections as $item) {
+                $section = Section::query()->where('_id', '=', $item['id'])->first();
                 if ($section) {
                     $sections[] = [
                         'section' => $section,
-                        'name'    => $item->name,
-                        'label'   => $item->label,
+                        'name'    => $item['name'],
+                        'label'   => $item['label'],
+                        'pages'   => self::query()
+                            ->where('type', '=', $section->type)
+                            ->where('lang', '=', $this->lang)
+                            ->orderByDesc('updated_at')
+                            ->limit($section->count >> 0)
+                            ->get()
                     ];
                 }
             }
         }
         return $sections;
+    }
+
+    public static function getBySection($id) {
+        return self::query()->where('sections.id', '=', $id)->get();
     }
 }

@@ -1,90 +1,86 @@
 <template>
-    <form method="POST" :action="url" @submit="validate" enctype="multipart/form-data">
-
+    <div>
         <slot></slot>
         <input v-if="_id" type="hidden" name="translation" :value="_id">
 
-        <div class="card mb-2">
+        <b-nav align="right">
+            <b-nav-item v-if="_id">
+                <a :href="obj.permalink" target="_blank" class="btn btn-info">
+                    <i class="mdi mdi-open-in-new"></i> Podgląd
+                </a>
+            </b-nav-item>
+            <b-nav-item>
+                <b-button type="button" variant="primary" @click="validate">Zapisz</b-button>
+            </b-nav-item>
+        </b-nav>
 
-            <div class="card-header clearfix">
-                <h4 v-if="_id" class="card-title float-left"><i class="mdi mdi-pencil"></i> Edytowanie strony</h4>
-                <h4 v-else class="card-title float-left"><i class="mdi mdi-plus"></i> Dodawanie nowej strony</h4>
-                <div class="float-right">
-                    <a v-if="_id" :href="obj.permalink" target="_blank" class="btn btn-info">
-                        <i class="mdi mdi-open-in-new"></i> Preview
-                    </a>
-                    <button type="submit" class="btn btn-primary">Zapisz</button>
+        <div class="row">
+
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Status</label>
+                    <multiselect v-model.lazy="obj.status" :options="statuses" track-by="id" label="name" placeholder="Wybierz status"></multiselect>
+                </div>
+
+                <div class="form-group">
+                    <label>Parent</label>
+                    <multiselect v-model.lazy="obj.parent" track-by="id" label="name" placeholder="Zaczni pisać" :options="parents" :searchable="true" @search-change="getParents">
+                        <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
+                    </multiselect>
+                </div>
+
+                <div class="form-group">
+                    <label>Slug</label>
+                    <input type="text" :class="getInputClass('slug')" name="slug" v-model.lazy="slug">
+                    <small v-if="hasError('slug')" class="error mt-2 text-danger">{{ errors.slug[0] }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Język</label>
+                    <multiselect v-model.lazy="obj.lang" :options="langs" track-by="key" label="name" placeholder="Wybierz język"></multiselect>
+                </div>
+
+                <div class="form-group">
+                    <label>Typ</label>
+                    <multiselect v-model.lazy="obj.type" track-by="template" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
+                </div>
+
+                <div v-if="hasModel" class="form-group">
+                    <label>{{ obj.type.text }}</label>
+                    <multiselect v-model.lazy="obj.object" track-by="id" label="name" placeholder="Zaczni pisać" :options="objects" :searchable="true" @search-change="getObjects">
+                        <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
+                    </multiselect>
+                </div>
+
+                <div class="form-group">
+                    <label>Image</label>
+                    <media-selector extensions="jpg,jpeg,png" @media-selected="selectImage"></media-selector>
+                    <div v-if="obj.image" class="img-thumbnail">
+                        <img :src="obj.image"/>
+                    </div>
                 </div>
             </div>
 
-            <div class="card-body row">
-
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <multiselect v-model.lazy="obj.status" :options="statuses" track-by="id" label="name" placeholder="Wybierz status"></multiselect>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Slug</label>
-                        <input type="text" :class="getInputClass('slug')" name="slug" v-model.lazy="slug">
-                        <small v-if="hasError('slug')" class="error mt-2 text-danger">{{ errors.slug[0] }}</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Język</label>
-                        <multiselect v-model.lazy="obj.lang" :options="langs" track-by="key" label="name" placeholder="Wybierz język"></multiselect>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Typ</label>
-                        <multiselect v-model.lazy="obj.type" track-by="template" label="name" placeholder="Wybierz typ" :options="types"></multiselect>
-                    </div>
-
-                    <div v-if="hasModel" class="form-group">
-                        <label>{{ obj.type.text }}</label>
-                        <multiselect v-model.lazy="obj.object" track-by="id" label="name" placeholder="Zaczni pisać" :options="objects" :searchable="true" @search-change="getObjects">
-                            <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
-                        </multiselect>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Image</label>
-                        <media-selector extensions="jpg,jpeg,png" @media-selected="selectImage"></media-selector>
-                        <div v-if="obj.image" class="img-thumbnail">
-                            <img :src="obj.image"/>
-                        </div>
-                    </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tytuł</label>
+                    <input type="text" :class="getInputClass('name')" name="name" placeholder="Wpisz tytuł" v-model.lazy="obj.name">
+                    <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
                 </div>
 
-                <div class="col-lg-8">
-                    <div class="form-group">
-                        <label>Tytuł</label>
-                        <input type="text" :class="getInputClass('name')" name="name" placeholder="Wpisz tytuł" v-model.lazy="obj.name">
-                        <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Lead</label>
-                        <textarea rows="7" class="form-control" name="lead" placeholder="Wpisz lead" v-model.lazy="obj.lead"/>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Content</label>
-                        <ckeditor :editor="editor" v-model="obj.content" :config="editorConfig"></ckeditor>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Parent</label>
-                        <multiselect v-model.lazy="obj.parent" track-by="id" label="name" placeholder="Zaczni pisać" :options="parents" :searchable="true" @search-change="getParents">
-                            <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
-                        </multiselect>
-                    </div>
+                <div class="form-group">
+                    <label>Lead</label>
+                    <textarea rows="7" class="form-control" name="lead" placeholder="Wpisz lead" v-model.lazy="obj.lead"/>
                 </div>
 
+                <div class="form-group">
+                    <label>Content</label>
+                    <ckeditor :editor="editor" v-model="obj.content" :config="editorConfig"></ckeditor>
+                </div>
             </div>
+
         </div>
-    </form>
+    </div>
 </template>
 
 <script>

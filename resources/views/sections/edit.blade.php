@@ -14,7 +14,7 @@
     <div class="content-wrapper">
         <div id="app">
             @if (isset($section))
-                <edit-section :_id=`{{ $section->_id }}` :_lang=`{{ $lang }}`>
+                <edit-section :_id=`{{ $section->_id }}`>
                     {{ csrf_field() }}
                 </edit-section>
             @else
