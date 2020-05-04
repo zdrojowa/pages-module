@@ -61,3 +61,7 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.0.4
 - bugfix type
+
+## Version 3.0.5
+- add opportunity filter by type, per_page
+- bugfix: if type template is changed, change pages template

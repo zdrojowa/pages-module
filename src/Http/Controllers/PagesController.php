@@ -75,6 +75,21 @@ class PagesController extends Controller {
         if ($request->has('lang')) {
             $pages->where('lang', '=', $request->get('lang'));
         }
+        
+        if ($request->has('type')) {
+            $pages->where('type', '=', $request->get('type'));
+        }
+
+        if ($request->has('per_page')) {
+            return response()->json(
+                $pages->paginate(
+                    $request->get('per_page'),
+                    ['*'],
+                    'page',
+                    $request->get('page') ?? 1
+                )
+            );
+        }
 
         return response()->json($pages->get());
     }
@@ -280,7 +295,6 @@ class PagesController extends Controller {
     }
 
     public function page(Request $request, $permalink = '/') {
-
         $isAdmin = false;
         if (Auth::check() && Auth::user()->admin) {
             $isAdmin = true;

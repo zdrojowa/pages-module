@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Selene\Modules\DashboardModule\ZdrojowaTable;
+use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Models\Type;
 
 class TypesController extends Controller {
@@ -69,9 +70,17 @@ class TypesController extends Controller {
     {
         if ($type === null) {
             $type = Type::create($request->all());
-        }
-        if (!$type->update($request->all())) {
-            return null;
+        } else {
+            $template = $type->template;
+
+            if (!$type->update($request->all())) {
+                return null;
+            }
+
+            if ($type->wasChanged('template')) {
+                Page::where('type', '=', $template)
+                    ->update(['type' => $request->get('template')]);
+            }
         }
 
         return $type;
