@@ -80,6 +80,10 @@ class PagesController extends Controller {
             $pages->where('type', '=', $request->get('type'));
         }
 
+        if ($request->has('status')) {
+            $pages->where('status', '=', $request->get('status'));
+        }
+
         if ($request->has('per_page')) {
             return response()->json(
                 $pages->paginate(

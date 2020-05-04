@@ -72,6 +72,7 @@ class Page extends Model
                         'pages'   => self::query()
                             ->where('type', '=', $section->type)
                             ->where('lang', '=', $this->lang)
+                            ->where('status', '=', 'public')
                             ->orderByDesc('updated_at')
                             ->limit($section->count >> 0)
                             ->get()
