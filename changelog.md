@@ -69,3 +69,6 @@ All notable changes to `PagesModule` will be documented in this file.
 ## Version 3.0.6
 - add opportunity filter by status
 - get only public pages in sections
+
+## Version 3.0.7
+- bugfix limit pages

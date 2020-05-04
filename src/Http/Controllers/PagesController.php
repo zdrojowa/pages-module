@@ -87,7 +87,7 @@ class PagesController extends Controller {
         if ($request->has('per_page')) {
             return response()->json(
                 $pages->paginate(
-                    $request->get('per_page'),
+                    $request->get('per_page') >> 0,
                     ['*'],
                     'page',
                     $request->get('page') ?? 1
