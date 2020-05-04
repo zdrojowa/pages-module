@@ -11,7 +11,6 @@ pages:
   methods:
     - POST
     - GET
-  permission: PagesModule.pages
 
 add:
   path: /dashboard/pages/add

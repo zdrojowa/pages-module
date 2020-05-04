@@ -72,3 +72,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.0.7
 - bugfix limit pages
+
+## Version 3.0.8
+- bugfix get pages permissions
