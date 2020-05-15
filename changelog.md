@@ -75,3 +75,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.0.8
 - bugfix get pages permissions
+
+## Version 3.1.0
+- add page gallery

@@ -42,6 +42,14 @@
                         </b-tab>
                         <b-tab>
                             <template v-slot:title>
+                                <b-icon-images></b-icon-images> Galeria
+                            </template>
+                            <gallery :id=`{{ $page->_id }}`>
+                                {{ csrf_field() }}
+                            </gallery>
+                        </b-tab>
+                        <b-tab>
+                            <template v-slot:title>
                                 <b-icon-columns></b-icon-columns> Sekcje
                             </template>
                             <page-section :id=`{{ $page->_id }}`>

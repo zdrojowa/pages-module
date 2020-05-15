@@ -69,13 +69,6 @@ addTranslation:
     - GET
   permission: PagesModule.pages
 
-getObjects:
-  path: /dashboard/pages/getObjects
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@getObjects
-  methods:
-    - GET
-  permission: PagesModule.pages
-
 types:
   path: /dashboard/pages-types
   controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@index

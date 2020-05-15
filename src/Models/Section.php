@@ -14,7 +14,7 @@ class Section extends Model
 
     protected $primaryKey = '_id';
 
-    protected $fillable = ['name', 'template', 'type', 'count'];
+    protected $fillable = ['name', 'template', 'type', 'count', 'is_gallery'];
 
     public function getType() {
         return Type::query()->where('template', '=', $this->type)->first();

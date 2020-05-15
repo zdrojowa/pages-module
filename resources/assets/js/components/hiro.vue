@@ -23,15 +23,6 @@
                     <source :src="hiro_video" type="video/webm">
                     <source :src="hiro_video" type="video/mp4">
                 </b-embed>
-<!--                <b-row>-->
-<!--                    <b-col>-->
-<!--                        <a v-if="hiro_video" :href="hiro_video" target="_blank">-->
-<!--                            <div class="thumbnail">-->
-<!--                                <i class="mdi mdi-file-video-outline text-white"></i>-->
-<!--                            </div>-->
-<!--                        </a>-->
-<!--                    </b-col>-->
-<!--                </b-row>-->
             </b-container>
         </div>
 

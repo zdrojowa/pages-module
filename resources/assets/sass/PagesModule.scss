@@ -12,6 +12,8 @@ div.thumbnail-img {
 
     .img-thumbnail {
         max-width: 500px;
+        max-height: 500px;
+        object-fit: contain;
     }
 }
 
@@ -47,5 +49,30 @@ button.close {
 
     i.mdi {
         font-size: 25px;
+    }
+}
+
+div.gallery-item {
+    display: flex;
+    justify-content: space-between;
+
+
+    @media all and (max-width: 1300px) {
+        flex-direction: column;
+
+        .thumbnail-img {
+            order: 2;
+        }
+
+        .close {
+            order: 1;
+        }
+    }
+
+    .gallery-form {
+        flex-grow: 4;
+        @media all and (max-width: 1300px) {
+            order: 3;
+        }
     }
 }

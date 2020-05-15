@@ -75,7 +75,7 @@ class PagesController extends Controller {
         if ($request->has('lang')) {
             $pages->where('lang', '=', $request->get('lang'));
         }
-        
+
         if ($request->has('type')) {
             $pages->where('type', '=', $request->get('type'));
         }
@@ -145,7 +145,7 @@ class PagesController extends Controller {
             $obj['object'] = $obj['object']['id'] ?? null;
 
             if ($page !== null) {
-                unset($obj['hiro_video'], $obj['hiro_images'], $obj['sections']);
+                unset($obj['hiro_video'], $obj['hiro_images'], $obj['sections'], $obj['gallery']);
             }
 
             $request->merge($obj);
@@ -154,6 +154,12 @@ class PagesController extends Controller {
         if ($request->has('sections')) {
             $request->merge([
                 'sections' => json_decode($request->get('sections'), true, 512, JSON_THROW_ON_ERROR)
+            ]);
+        }
+
+        if ($request->has('gallery')) {
+            $request->merge([
+                'gallery' => json_decode($request->get('gallery'), true, 512, JSON_THROW_ON_ERROR)
             ]);
         }
 

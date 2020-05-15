@@ -28,6 +28,7 @@ class Page extends Model
         'hiro_images',
         'translations',
         'object',
+        'gallery',
         'sections'
     ];
 
@@ -65,18 +66,27 @@ class Page extends Model
             foreach ($this->sections as $item) {
                 $section = Section::query()->where('_id', '=', $item['id'])->first();
                 if ($section) {
-                    $sections[] = [
-                        'section' => $section,
-                        'name'    => $item['name'],
-                        'label'   => $item['label'],
-                        'pages'   => self::query()
-                            ->where('type', '=', $section->type)
-                            ->where('lang', '=', $this->lang)
-                            ->where('status', '=', 'public')
-                            ->orderByDesc('updated_at')
-                            ->limit($section->count >> 0)
-                            ->get()
-                    ];
+                    if ($section->is_gallery) {
+                        $sections[] = [
+                            'section' => $section,
+                            'name'    => $item['name'],
+                            'label'   => $item['label'],
+                            'gallery' => $this->gallery
+                        ];
+                    } else {
+                        $sections[] = [
+                            'section' => $section,
+                            'name'    => $item['name'],
+                            'label'   => $item['label'],
+                            'pages'   => self::query()
+                                ->where('type', '=', $section->type)
+                                ->where('lang', '=', $this->lang)
+                                ->where('status', '=', 'public')
+                                ->orderByDesc('updated_at')
+                                ->limit($section->count >> 0)
+                                ->get()
+                        ];
+                    }
                 }
             }
         }
