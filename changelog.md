@@ -78,3 +78,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.1.0
 - add page gallery
+
+## Version 3.1.1
+- bugfix
