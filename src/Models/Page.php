@@ -85,7 +85,7 @@ class Page extends Model
                         'section' => $section,
                         'name'    => $item['name'],
                         'label'   => $item['label'],
-                        'pages'   => $items
+                        'items'   => $items
                     ];
                 }
             }

@@ -84,3 +84,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.2.0
 - add API
+
+## Version 3.2.1
+- bugfix
