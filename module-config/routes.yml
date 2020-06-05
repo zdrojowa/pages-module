@@ -185,6 +185,12 @@ destroySection:
     - DELETE
   permission: PagesModule.pages
 
+api.page:
+  path: /api/page
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiController@page
+  methods:
+    - GET
+
 page:
   path: /{{slug}}
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@page
