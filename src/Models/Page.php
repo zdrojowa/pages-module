@@ -67,7 +67,7 @@ class Page extends Model
                 $section = Section::query()->where('_id', '=', $item['id'])->first();
                 if ($section) {
                     $items = [];
-                    if ($section->is_gallery) {
+                    if ($section->isGallery()) {
                         $items = $this->gallery;
                     } else {
                         $count = $section->count >> 0;

@@ -19,4 +19,8 @@ class Section extends Model
     public function getType() {
         return Type::query()->where('template', '=', $this->type)->first();
     }
+    
+    public function isGallery() {
+        return $this->is_gallery === 'true';
+    }
 }

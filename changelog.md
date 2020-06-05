@@ -87,3 +87,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.2.1
 - bugfix
+
+## Version 3.2.2
+- bugfix isGallery

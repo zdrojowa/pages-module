@@ -148,7 +148,7 @@
                             self.count      = res.data.count;
                             self.type       = self.getItem(self.types, 'template', res.data.type);
                             if (res.data.is_gallery != null) {
-                                self.is_gallery = res.data.is_gallery;
+                                self.is_gallery = res.data.is_gallery === 'true';
                             }
 
                         }).catch(err => {
