@@ -151,6 +151,12 @@ class PagesController extends Controller {
             $request->merge($obj);
         }
 
+        if ($request->has('hiro_video')) {
+            if($request->get('hiro_video') === 'null') {
+                $request->merge(['hiro_video' => null]);
+            }
+        }
+
         if ($request->has('sections')) {
             $request->merge([
                 'sections' => json_decode($request->get('sections'), true, 512, JSON_THROW_ON_ERROR)

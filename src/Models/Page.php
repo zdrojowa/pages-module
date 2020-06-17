@@ -31,6 +31,14 @@ class Page extends Model
         'gallery',
         'sections'
     ];
+    
+    public function getHeroImages() {
+        if (!empty($this->hiro_images)) {
+            return json_decode($this->hiro_images);
+        }
+
+        return [];
+    }
 
     public function getTranslations() {
         $translations = [];
