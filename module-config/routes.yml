@@ -197,4 +197,4 @@ page:
   methods:
     - GET
   where:
-    slug: (.*)
+    slug: ^(?!sitemap|api\/v).*

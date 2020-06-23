@@ -93,3 +93,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 3.2.3
 - bugfix hero
+
+## Version 3.2.4
+- reserved routes api/v or sitemap
