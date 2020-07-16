@@ -15,6 +15,10 @@
             <b-form-input v-model="label"></b-form-input>
         </b-input-group>
 
+        <b-input-group prepend="Link" class="mt-3">
+            <b-form-input v-model="link"></b-form-input>
+        </b-input-group>
+
         <b-row>
             <b-col lg="4" class="pb-2"></b-col>
             <b-col lg="4" class="py-2">
@@ -31,7 +35,7 @@
             item: {
                 required: false,
                 type: Object,
-                default: {id: 0, name: '', label: ''}
+                default: {id: 0, name: '', label: '', link: ''}
             },
             id: {
                 required: false,
@@ -45,6 +49,7 @@
                 isNew: true,
                 name: '',
                 label: '',
+                link: '',
                 section: null,
                 sections: []
             };
@@ -54,6 +59,7 @@
             this.isNew = this.item.id === 0;
             this.name  = this.item.name;
             this.label = this.item.label;
+            this.link  = this.item.link;
 
             if (!this.isNew) {
                 this.getSection(this.item.id);
@@ -72,11 +78,12 @@
         methods: {
 
             save() {
-                this.$emit("save", {id: this.section.id, name: this.name, label: this.label});
+                this.$emit("save", {id: this.section.id, name: this.name, label: this.label, link: this.link});
 
                 this.section = null;
                 this.name    = '';
                 this.label   = '';
+                this.link    = '';
             },
 
             getSection: function(id) {

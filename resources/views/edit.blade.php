@@ -50,6 +50,14 @@
                         </b-tab>
                         <b-tab>
                             <template v-slot:title>
+                                <b-icon-brightness-high></b-icon-brightness-high> Highlights
+                            </template>
+                            <highlights :id=`{{ $page->_id }}`>
+                                {{ csrf_field() }}
+                            </highlights>
+                        </b-tab>
+                        <b-tab>
+                            <template v-slot:title>
                                 <b-icon-columns></b-icon-columns> Sekcje
                             </template>
                             <page-section :id=`{{ $page->_id }}`>

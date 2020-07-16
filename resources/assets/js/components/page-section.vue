@@ -32,7 +32,7 @@
 
         data() {
             return {
-                element: {id: 0, name: '', label: ''},
+                element: {id: 0, name: '', label: '', link: ''},
                 sections: []
             };
         },
@@ -65,7 +65,7 @@
             },
 
             add($event) {
-                this.sections.push({id: $event.id, name: $event.name, label: $event.label});
+                this.sections.push({id: $event.id, name: $event.name, label: $event.label, link: $event.link});
                 this.$bvModal.hide('0');
             },
 

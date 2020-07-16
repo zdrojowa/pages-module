@@ -34,14 +34,6 @@
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-12">
-                        <b-form-checkbox v-model.lazy="is_gallery" name="check-button" switch>
-                            Galeria
-                        </b-form-checkbox>
-                    </div>
-                </div>
-
-                <div v-if="!is_gallery" class="row">
 
                     <div class="form-group col-md-6">
                         <label title="Typ stron które będą pokazywały się w Sekcji">
@@ -75,7 +67,6 @@
                 template: '',
                 type: '',
                 count: 0,
-                is_gallery: false,
                 errors: {
                     name: {},
                     template: {}
@@ -142,15 +133,11 @@
                 if (self._id) {
                     axios.get('/dashboard/pages-sections/get?id=' + self._id)
                         .then(res => {
-                            self.id         = res.data.id;
-                            self.name       = res.data.name;
-                            self.template   = res.data.template;
-                            self.count      = res.data.count;
-                            self.type       = self.getItem(self.types, 'template', res.data.type);
-                            if (res.data.is_gallery != null) {
-                                self.is_gallery = res.data.is_gallery === 'true';
-                            }
-
+                            self.id       = res.data.id;
+                            self.name     = res.data.name;
+                            self.template = res.data.template;
+                            self.count    = res.data.count;
+                            self.type     = self.getItem(self.types, 'template', res.data.type);
                         }).catch(err => {
                             console.log(err)
                     })
@@ -169,7 +156,6 @@
                     formData.append('template', this.template);
                     formData.append('count', this.count);
                     formData.append('type', this.type.template);
-                    formData.append('is_gallery', this.is_gallery);
 
                     axios.post(this.url, formData, {
                         headers: {

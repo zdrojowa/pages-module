@@ -169,6 +169,12 @@ class PagesController extends Controller {
             ]);
         }
 
+        if ($request->has('highlights')) {
+            $request->merge([
+                'highlights' => $request->get('highlights')
+            ]);
+        }
+
         $action = 'updated';
         if ($page === null) {
             $page = Page::create($request->all());

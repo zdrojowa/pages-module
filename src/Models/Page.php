@@ -29,9 +29,10 @@ class Page extends Model
         'translations',
         'object',
         'gallery',
+        'highlights',
         'sections'
     ];
-    
+
     public function getHeroImages() {
         if (!empty($this->hiro_images)) {
             return json_decode($this->hiro_images);
@@ -75,24 +76,21 @@ class Page extends Model
                 $section = Section::query()->where('_id', '=', $item['id'])->first();
                 if ($section) {
                     $items = [];
-                    if ($section->isGallery()) {
-                        $items = $this->gallery;
-                    } else {
-                        $count = $section->count >> 0;
-                        if ($count > 0) {
-                            $items = self::query()
-                                ->where('type', '=', $section->type)
-                                ->where('lang', '=', $this->lang)
-                                ->where('status', '=', 'public')
-                                ->orderByDesc('updated_at')
-                                ->limit($count)
-                                ->get();
-                        }
+                    $count = $section->count >> 0;
+                    if ($count > 0) {
+                        $items = self::query()
+                            ->where('type', '=', $section->type)
+                            ->where('lang', '=', $this->lang)
+                            ->where('status', '=', 'public')
+                            ->orderByDesc('updated_at')
+                            ->limit($count)
+                            ->get();dd($items);
                     }
                     $sections[] = [
                         'section' => $section,
                         'name'    => $item['name'],
                         'label'   => $item['label'],
+                        'link'    => $item['link'],
                         'items'   => $items
                     ];
                 }

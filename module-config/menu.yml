@@ -7,6 +7,10 @@ pages:
       name: Strony
       permission: PagesModule.pages
       route: PagesModule::index
+    icons:
+      name: Ikonki
+      permission: PagesModule.pages
+      route: PagesModule::icons
     types:
       name: Typy
       permission: PagesModule.pages
