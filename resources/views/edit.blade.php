@@ -52,7 +52,7 @@
                             <template v-slot:title>
                                 <b-icon-brightness-high></b-icon-brightness-high> Highlights
                             </template>
-                            <highlights :id=`{{ $page->_id }}`>
+                            <highlights :id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
                                 {{ csrf_field() }}
                             </highlights>
                         </b-tab>

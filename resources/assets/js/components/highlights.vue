@@ -28,16 +28,11 @@
                             <b-input-group prepend="Opis" class="mt-3">
                                 <b-form-textarea v-model.lazy="element.description" rows="3"></b-form-textarea>
                             </b-input-group>
-                            <b-form-group label="Link" class="mt-3">
-                                <div class="row">
-                                    <b-input-group prepend="Text" class="mt-3 col-sm-6">
-                                        <b-form-input v-model.lazy="element.link.text"></b-form-input>
-                                    </b-input-group>
-                                    <b-input-group prepend="Url" class="mt-3 col-sm-6">
-                                        <b-form-input v-model.lazy="element.link.url"></b-form-input>
-                                    </b-input-group>
-                                </div>
-                            </b-form-group>
+                            <div class="form-group mt-3">
+                                <label>Strona</label>
+                                <multiselect v-model.lazy="element.page" track-by="id" label="name" placeholder="Zaczni pisać" :options="pages" :searchable="true">
+                                </multiselect>
+                            </div>
                         </div>
                         <div>
                             <button type="button" aria-label="Close" class="close" @click="remove(index)">×</button>
@@ -74,19 +69,25 @@
             id: {
                 required: true,
                 type: String
+            },
+            lang: {
+                required: true,
+                type: String
             }
         },
 
         data() {
             return {
-                element: {id: 0, title: '', label: '', description: '', link: {text: '', url: ''}},
+                element: {id: 0, title: '', label: '', description: '', page: ''},
                 highlights: [],
                 options: [],
-                icon: {}
+                icon: {},
+                pages: []
             };
         },
 
         created() {
+            this.getPages();
             this.getIcons();
         },
 
@@ -98,6 +99,15 @@
         },
 
         methods: {
+
+            getPages(query) {
+                axios.get('/api/page?lang=' + this.lang + '&select=id,name')
+                    .then(res => {
+                        this.pages = res.data;
+                    }).catch(err => {
+                    console.log(err)
+                })
+            },
 
             getIcons: function() {
                 let self = this;
@@ -121,7 +131,16 @@
                             if (typeof res.data.highlights == 'string') {
                                 self.highlights = JSON.parse(res.data.highlights);
                             } else {
-                                self.highlights = res.data.highlights;
+                                res.data.highlights.forEach(item => {
+                                    self.pages.forEach(i => {
+                                        if (i.id === item.page) {
+                                            let page = item;
+                                            page.page = i;
+                                            self.highlights.push(page);
+                                        }
+                                    });
+
+                                });
                             }
                         }
                     }).catch(err => {
@@ -144,15 +163,20 @@
             },
 
             add() {
-                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', link: {text: '', url: ''}});
+                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', page: ''});
             },
 
             save: function() {
                 let self = this;
 
+                let lights = [];
+                this.highlights.forEach(item => {
+                    lights.push({id: item.id, title: item.title, label: item.label, description: item.description, page: item.page.id});
+                });
+
                 let formData = new FormData();
                 formData.append('_method', 'PUT');
-                formData.append('highlights', JSON.stringify(this.highlights));
+                formData.append('highlights', JSON.stringify(lights));
 
                 axios.post(this.url, formData, {
                     headers: {

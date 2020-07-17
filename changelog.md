@@ -102,3 +102,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 4.0.1
 - bugfix highlights
+
+## Version 4.0.2
+- bugfix highlights (pages)

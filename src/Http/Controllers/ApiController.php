@@ -17,6 +17,11 @@ class ApiController extends Controller
             ->where('status', '=', 'public')
             ->orderBy('updated_at');
 
+        if ($request->has('select')) {
+            $select = explode(',', $request->get('select'));
+            $pages->select($select);
+        }
+
         if ($request->has('id')) {
             $pages->where('_id', '=', $request->get('id'));
             return response()->json($pages->first());
@@ -33,6 +38,10 @@ class ApiController extends Controller
         if ($request->has('object')) {
             $pages->where('object', '=', $request->get('object'));
             return response()->json($pages->first());
+        }
+
+        if ($request->has('query')) {
+            $pages->where('name', 'LIKE', '%' . $request->get('query') . '%');
         }
 
         if ($request->has('per_page')) {
