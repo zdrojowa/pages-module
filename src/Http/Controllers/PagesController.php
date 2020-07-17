@@ -158,22 +158,28 @@ class PagesController extends Controller {
         }
 
         if ($request->has('sections')) {
-            $request->merge([
-                'sections' => json_decode($request->get('sections'), true, 512, JSON_THROW_ON_ERROR)
-            ]);
+            $sections = $request->get('sections');
+            if (is_string($sections)) {
+                $request->merge([
+                    'sections' => json_decode($sections, true, 512, JSON_THROW_ON_ERROR)
+                ]);
+            }
         }
 
         if ($request->has('gallery')) {
-            $request->merge([
-                'gallery' => json_decode($request->get('gallery'), true, 512, JSON_THROW_ON_ERROR)
-            ]);
+            $gallery = $request->get('gallery');
+            if (is_string($gallery)) {
+                $request->merge([
+                    'gallery' => json_decode($gallery, true, 512, JSON_THROW_ON_ERROR)
+                ]);
+            }
         }
 
         if ($request->has('highlights')) {
             $highlights = $request->get('highlights');
             if (is_string($highlights)) {
                 $request->merge([
-                    'highlights' => json_decode($request->get('highlights'), true, 512, JSON_THROW_ON_ERROR)
+                    'highlights' => json_decode($highlights, true, 512, JSON_THROW_ON_ERROR)
                 ]);
             }
 
