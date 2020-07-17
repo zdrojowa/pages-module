@@ -171,7 +171,7 @@ class PagesController extends Controller {
 
         if ($request->has('highlights')) {
             $request->merge([
-                'highlights' => $request->get('highlights')
+                'highlights' => json_decode($request->get('highlights'), true, 512, JSON_THROW_ON_ERROR)
             ]);
         }
 

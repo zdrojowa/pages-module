@@ -99,3 +99,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 4.0.0
 - add highlights
+
+## Version 4.0.1
+- bugfix highlights

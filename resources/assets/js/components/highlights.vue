@@ -118,7 +118,11 @@
                         if (typeof res.data.highlights == 'undefined') {
                             self.highlights = [];
                         } else {
-                           self.highlights = res.data.highlights;
+                            if (typeof res.data.highlights == 'string') {
+                                self.highlights = JSON.parse(res.data.highlights);
+                            } else {
+                                self.highlights = res.data.highlights;
+                            }
                         }
                     }).catch(err => {
                         console.log(err)
