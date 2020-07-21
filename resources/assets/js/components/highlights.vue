@@ -28,10 +28,36 @@
                             <b-input-group prepend="Opis" class="mt-3">
                                 <b-form-textarea v-model.lazy="element.description" rows="3"></b-form-textarea>
                             </b-input-group>
-                            <div class="form-group mt-3">
+                            <b-form-checkbox v-model="element.isPage" switch>
+                                Strona
+                            </b-form-checkbox>
+                            <div v-if="element.isPage" class="form-group mt-3">
                                 <label>Strona</label>
                                 <multiselect v-model.lazy="element.page" track-by="id" label="name" placeholder="Zaczni pisać" :options="pages" :searchable="true">
                                 </multiselect>
+                            </div>
+                            <div v-else class="form-group mt-3">
+                                <div v-if="element.image" class="gallery-item">
+                                    <div class="thumbnail-img">
+                                        <img :src="element.image" class="img-thumbnail">
+                                    </div>
+                                    <div class="gallery-form px-3">
+                                        <b-form-group label="Link" class="mt-3">
+                                            <div class="row">
+                                                <b-input-group prepend="Text" class="mt-3 col-sm-6">
+                                                    <b-form-input v-model.lazy="element.link.text"></b-form-input>
+                                                </b-input-group>
+                                                <b-input-group prepend="Url" class="mt-3 col-sm-6">
+                                                    <b-form-input v-model.lazy="element.link.url"></b-form-input>
+                                                </b-input-group>
+                                            </div>
+                                        </b-form-group>
+                                    </div>
+                                    <div>
+                                        <button type="button" aria-label="Close" class="close" @click="removeImage(index)">×</button>
+                                    </div>
+                                </div>
+                                <media-selector v-else extensions="jpg,jpeg,png" @media-selected-event="addImage" :data="index.toString()"></media-selector>
                             </div>
                         </div>
                         <div>
@@ -78,7 +104,7 @@
 
         data() {
             return {
-                element: {id: 0, title: '', label: '', description: '', page: ''},
+                element: {id: 0, title: '', label: '', description: '', isPage: true, page: '', image: '', link: {}},
                 highlights: [],
                 options: [],
                 icon: {},
@@ -132,14 +158,17 @@
                                 self.highlights = JSON.parse(res.data.highlights);
                             } else {
                                 res.data.highlights.forEach(item => {
-                                    self.pages.forEach(i => {
-                                        if (i.id === item.page) {
-                                            let page = item;
-                                            page.page = i;
-                                            self.highlights.push(page);
-                                        }
-                                    });
-
+                                    if (item.isPage) {
+                                        self.pages.forEach(i => {
+                                            if (i.id === item.page) {
+                                                let page = item;
+                                                page.page = i;
+                                                self.highlights.push(page);
+                                            }
+                                        });
+                                    } else {
+                                        self.highlights.push(item);
+                                    }
                                 });
                             }
                         }
@@ -162,8 +191,20 @@
                 this.highlights.splice(index, 1);
             },
 
+            removeImage(index) {
+                this.highlights[index].image = '';
+                this.$forceUpdate();
+            },
+
             add() {
-                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', page: ''});
+                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', isPage: true, page: '', image: '', link: {}});
+            },
+
+            addImage(url, index) {
+                this.highlights[index].page  = '';
+                this.highlights[index].image = url;
+                this.highlights[index].link  = {text: '', url: ''};
+                this.$forceUpdate();
             },
 
             save: function() {
@@ -171,7 +212,16 @@
 
                 let lights = [];
                 this.highlights.forEach(item => {
-                    lights.push({id: item.id, title: item.title, label: item.label, description: item.description, page: item.page.id});
+                    lights.push({
+                        id: item.id,
+                        title: item.title,
+                        label: item.label,
+                        description: item.description,
+                        isPage: item.isPage,
+                        page: item.page.id,
+                        image: item.image,
+                        link: item.link
+                    });
                 });
 
                 let formData = new FormData();
