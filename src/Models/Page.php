@@ -84,7 +84,7 @@ class Page extends Model
                             ->where('status', '=', 'public')
                             ->orderByDesc('updated_at')
                             ->limit($count)
-                            ->get();dd($items);
+                            ->get();
                     }
                     $sections[] = [
                         'section' => $section,
