@@ -9,7 +9,7 @@
         }
     ],
     "homepage": "https://github.com/zdrojowa/pages-module",
-    "keywords": ["PagesModule", "Laravel", "Vue"],
+    "keywords": ["PagesModule", "Laravel", "Vue", "Page"],
     "require": {
         "ext-json": "*",
         "jenssegers/mongodb": "*",
@@ -18,7 +18,8 @@
         "zdrojowa/language-module": "^1.0",
         "zdrojowa/settings-module": "^1.0",
         "zdrojowa/revision-module": "^1.1",
-        "zdrojowa/menu-module": "^2.0"
+        "zdrojowa/menu-module": "^2.0",
+        "zdrojowa/icon-module": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.0",

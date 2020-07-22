@@ -21,7 +21,6 @@ Vue.component('page-section', require('./components/page-section.vue').default);
 Vue.component('editor', require('./components/editor.vue').default);
 Vue.component('type', require('./components/type.vue').default);
 Vue.component('edit-section', require('./components/edit-section.vue').default);
-Vue.component('icon', require('./components/icon.vue').default);
 Vue.component('highlights', require('./components/highlights.vue').default);
 
 const app = new Vue({

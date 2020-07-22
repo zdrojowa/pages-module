@@ -76,57 +76,6 @@ getObjects:
     - GET
   permission: PagesModule.pages
 
-icons:
-  path: /dashboard/pages-icons
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@index
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-getIcons:
-  path: /dashboard/pages-icons/get
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@get
-  methods:
-    - GET
-    - POST
-  permission: PagesModule.pages
-
-addIcon:
-  path: /dashboard/pages-icons/add
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@add
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-storeIcon:
-  path: /dashboard/pages-icons/store
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@store
-  methods:
-    - POST
-  permission: PagesModule.pages
-
-editIcon:
-  path: /dashboard/pages-icons/{{icon}}/edit
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@edit
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-updateIcon:
-  path: /dashboard/pages-icons/{{icon}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@update
-  methods:
-    - PUT
-    - PATCH
-  permission: PagesModule.pages
-
-destroyIcon:
-  path: /dashboard/pages-icons/destroy/{{icon}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\IconsController@destroy
-  methods:
-    - DELETE
-  permission: PagesModule.pages
-
 types:
   path: /dashboard/pages-types
   controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@index
@@ -239,12 +188,6 @@ destroySection:
 api.page:
   path: /api/page
   controller: Selene\Modules\PagesModule\Http\Controllers\ApiController@page
-  methods:
-    - GET
-
-api.icon:
-  path: /api/pages-icons
-  controller: Selene\Modules\PagesModule\Http\Controllers\ApiController@getIcons
   methods:
     - GET
 

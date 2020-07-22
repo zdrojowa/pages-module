@@ -117,3 +117,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 4.0.6
 - sections bugfix
+
+## Version 5.0.0
+- icons module

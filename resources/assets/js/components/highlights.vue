@@ -138,7 +138,7 @@
             getIcons: function() {
                 let self = this;
 
-                axios.get('/api/pages-icons')
+                axios.get('/api/icons')
                     .then(res => {
                         self.options = res.data;
                         this.getHighlights();
