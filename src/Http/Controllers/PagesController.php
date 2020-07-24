@@ -346,6 +346,9 @@ class PagesController extends Controller {
             abort(404);
         }
 
+        session()->put('locale', $page->lang);
+        \App::setLocale($page->lang);
+
         return view($page->type, [
             'page'      => $page,
             'settings'  => Setting::getAllByKey(),

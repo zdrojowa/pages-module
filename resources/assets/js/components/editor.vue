@@ -50,6 +50,7 @@
                     <multiselect v-model.lazy="obj.object" track-by="id" label="name" placeholder="Zaczni pisać" :options="objects" :searchable="true" @search-change="getObjects">
                         <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
                     </multiselect>
+                    <small v-if="hasError('object')" class="error mt-2 text-danger">{{ errors.object[0] }}</small>
                 </div>
 
                 <div class="form-group">
@@ -119,7 +120,8 @@
                 },
                 errors: {
                     name: {},
-                    slug: {}
+                    slug: {},
+                    object: {}
                 },
                 slug: ''
             };
@@ -389,6 +391,18 @@
             'slug'() {
                 this.setPermalink();
                 this.checkPermalinkUnique();
+            },
+
+            hasModel() {
+                if (this.hasModel) {
+                    if(!this.object) {
+                        this.errors.object = ['To pole jest wymagane'];
+                    } else {
+                        this.errors.object = [];
+                    }
+                } else {
+                    this.errors.object = [];
+                }
             }
         }
     }

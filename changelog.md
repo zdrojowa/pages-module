@@ -120,3 +120,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 5.0.0
 - icons module
+
+## Version 5.1.0
+- Translations setLocale
