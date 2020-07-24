@@ -123,3 +123,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 5.1.0
 - Translations setLocale
+
+## Version 5.1.1
+- Get Translations

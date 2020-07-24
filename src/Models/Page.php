@@ -54,6 +54,22 @@ class Page extends Model
         return $translations;
     }
 
+    public function getPublicTranslations() {
+        $translations = [];
+        if (!empty($this->translations)) {
+            foreach (json_decode($this->translations) as $id) {
+                $page = self::query()
+                    ->where('_id', '=', $id)
+                    ->where('status', '=', 'public')
+                    ->first();
+                if ($page) {
+                    $translations[$page->lang] = $page;
+                }
+            }
+        }
+        return $translations;
+    }
+
     public function getType() {
         return Type::query()->where('template', '=', $this->type)->first();
     }
