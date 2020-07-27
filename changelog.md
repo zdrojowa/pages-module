@@ -129,3 +129,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 5.1.2
 - Get Translations
+
+## Version 5.1.3
+- fix hero

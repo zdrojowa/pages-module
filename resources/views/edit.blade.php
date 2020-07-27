@@ -34,7 +34,7 @@
                     @if(!$new)
                         <b-tab>
                             <template v-slot:title>
-                                <b-icon-image></b-icon-image> Hiro
+                                <b-icon-image></b-icon-image> Hero
                             </template>
                             <hiro :_id=`{{ $page->_id }}`>
                                 {{ csrf_field() }}

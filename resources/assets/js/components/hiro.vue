@@ -100,7 +100,11 @@
                         if (typeof res.data.hiro_images == 'undefined') {
                             self.hiro_images = [];
                         } else {
-                            self.hiro_images = JSON.parse(res.data.hiro_images);
+                            if (Array.isArray(res.data.hiro_images)) {
+                                self.hiro_images = res.data.hiro_images;
+                            } else {
+                                self.hiro_images = JSON.parse(res.data.hiro_images);
+                            }
                         }
                     }).catch(err => {
                     console.log(err)
