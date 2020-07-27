@@ -35,7 +35,13 @@ class Page extends Model
 
     public function getHeroImages() {
         if (!empty($this->hiro_images)) {
-            return json_decode($this->hiro_images);
+            if (is_string($this->hiro_images)) {
+                return json_decode($this->hiro_images);
+            }
+
+            if (is_array($this->hiro_images)) {
+                return $this->hiro_images;
+            }
         }
 
         return [];
