@@ -66,6 +66,14 @@
                         </b-tab>
                         <b-tab>
                             <template v-slot:title>
+                                <b-icon-search></b-icon-search> SEO
+                            </template>
+                            <seo :id=`{{ $page->_id }}`>
+                                {{ csrf_field() }}
+                            </seo>
+                        </b-tab>
+                        <b-tab>
+                            <template v-slot:title>
                                 <b-icon-clock-history></b-icon-clock-history> History
                             </template>
                             @include('RevisionModule::revisions', [

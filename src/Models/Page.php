@@ -30,7 +30,8 @@ class Page extends Model
         'object',
         'gallery',
         'highlights',
-        'sections'
+        'sections',
+        'meta_description',
     ];
 
     public function getHeroImages() {

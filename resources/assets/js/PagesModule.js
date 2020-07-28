@@ -22,6 +22,7 @@ Vue.component('editor', require('./components/editor.vue').default);
 Vue.component('type', require('./components/type.vue').default);
 Vue.component('edit-section', require('./components/edit-section.vue').default);
 Vue.component('highlights', require('./components/highlights.vue').default);
+Vue.component('seo', require('./components/seo.vue').default);
 
 const app = new Vue({
     el: '#app'

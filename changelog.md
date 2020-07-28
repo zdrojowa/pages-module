@@ -132,3 +132,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 5.1.3
 - fix hero
+
+## Version 6.0.0
+- SEO: meta description
