@@ -81,8 +81,17 @@
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then(res => {
+                    this.$bvToast.toast('Sekcje zaktualizowane', {
+                        title: `Sekcje`,
+                        variant: 'success',
+                        solid: true
+                    })
                 }).catch(err => {
-                    console.log(err);
+                    this.$bvToast.toast(err, {
+                        title: `Błąd`,
+                        variant: 'danger',
+                        solid: true
+                    })
                 });
             }
         }

@@ -135,3 +135,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.0.0
 - SEO: meta description
+
+## Version 6.0.1
+- Highlights: without icon

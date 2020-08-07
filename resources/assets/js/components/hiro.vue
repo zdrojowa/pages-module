@@ -124,9 +124,18 @@
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                    .then(res => {
-                    }).catch(err => {
-                    console.log(err);
+                .then(res => {
+                    this.$bvToast.toast('Hero zaktualizowane', {
+                        title: `Hero`,
+                        variant: 'success',
+                        solid: true
+                    })
+                }).catch(err => {
+                    this.$bvToast.toast(err, {
+                        title: `Błąd`,
+                        variant: 'danger',
+                        solid: true
+                    })
                 });
             }
         }

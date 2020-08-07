@@ -13,10 +13,13 @@
 
         <div class="row item-conteiner">
             <draggable class="list-group" ghost-class="ghost" :list="highlights">
-                <div class="list-group-item" v-for="(element, index) in highlights" :key="element.id">
+                <div class="list-group-item" v-for="(element, index) in highlights" :key="index">
                     <div class="item gallery-item">
-                        <div class="thumbnail-img">
+                        <div v-if="element.id" class="thumbnail-img">
                             <img :src="getIcon(element.id)" class="img-thumbnail">
+                        </div>
+                        <div v-else>
+                            Bez ikonki
                         </div>
                         <div class="gallery-form px-3">
                             <b-input-group prepend="Tytuł" class="mt-3">
@@ -106,7 +109,10 @@
             return {
                 element: {id: 0, title: '', label: '', description: '', isPage: true, page: '', image: '', link: {}},
                 highlights: [],
-                options: [],
+                options: [{
+                    name: 'Bez ikonki',
+                    id: 0
+                }],
                 icon: {},
                 pages: []
             };
@@ -140,7 +146,9 @@
 
                 axios.get('/api/icons')
                     .then(res => {
-                        self.options = res.data;
+                        res.data.forEach(item => {
+                            self.options.push(item);
+                        })
                         this.getHighlights();
                     }).catch(err => {
                     console.log(err)
@@ -233,8 +241,17 @@
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then(res => {
+                    this.$bvToast.toast('Highlights zaktualizowane', {
+                        title: `Highlights`,
+                        variant: 'success',
+                        solid: true
+                    })
                 }).catch(err => {
-                    console.log(err);
+                    this.$bvToast.toast(err, {
+                        title: `Błąd`,
+                        variant: 'danger',
+                        solid: true
+                    })
                 });
             }
         }
