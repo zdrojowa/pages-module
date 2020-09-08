@@ -138,3 +138,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.0.1
 - Highlights: without icon
+
+## Version 6.0.2
+- Bugfix: admin page preview

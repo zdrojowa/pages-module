@@ -327,16 +327,11 @@ class PagesController extends Controller {
     }
 
     public function page(Request $request, $permalink = '/') {
-        $isAdmin = false;
-        if (Auth::check() && Auth::user()->admin) {
-            $isAdmin = true;
-        }
-
         $pageBuilder = Page::query()
             ->where('permalink', '=', $permalink)
             ->orWhere('permalink', '=', '/' . $permalink);
 
-        if (!$isAdmin) {
+        if (!Auth::check()) {
             $pageBuilder->where('status', '=', 'public');
         }
 
