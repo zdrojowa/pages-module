@@ -13,9 +13,10 @@
 
         <div class="row item-conteiner">
             <draggable class="list-group" ghost-class="ghost" :list="gallery">
-                <div class="list-group-item" v-for="(element, index) in gallery" :key="element.url">
+                <div class="list-group-item" v-for="(element, index) in gallery" :key="index + element.url">
                     <div class="item gallery-item">
                         <div class="thumbnail-img">
+                            <media-selector extensions="jpg,jpeg,png" @media-selected="change(index, $event)"></media-selector>
                             <img :src="element.url" class="img-thumbnail">
                         </div>
                         <div class="gallery-form px-3">
@@ -65,13 +66,13 @@
         },
 
         created() {
-            this.getGallery();
+            this.getGallery()
         },
 
         computed: {
 
             url: function () {
-                return '/dashboard/pages/' + this.id;
+                return '/dashboard/pages/' + this.id
             }
         },
 
@@ -80,31 +81,35 @@
             getGallery() {
                 let self = this;
                 axios.get('/dashboard/pages/get?id=' + self.id)
-                    .then(res => {
-                        if (typeof res.data.gallery == 'undefined') {
-                            self.gallery = [];
-                        } else {
-                           self.gallery = res.data.gallery;
-                        }
-                    }).catch(err => {
-                        console.log(err)
+                .then(res => {
+                    if (typeof res.data.gallery == 'undefined') {
+                        self.gallery = []
+                    } else {
+                       self.gallery = res.data.gallery
+                    }
+                }).catch(err => {
+                    console.log(err)
                 })
             },
 
             remove(index) {
-                this.gallery.splice(index, 1);
+                this.gallery.splice(index, 1)
             },
 
             add(url) {
-                this.gallery.push({url: url, title: '', description: '', link: {text: '', url: ''}});
+                this.gallery.push({url: url, title: '', description: '', link: {text: '', url: ''}})
+            },
+
+            change: function(index, $event) {
+              this.gallery[index].url = $event
             },
 
             save: function() {
-                let self = this;
+                let self = this
 
-                let formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('gallery', JSON.stringify(this.gallery));
+                let formData = new FormData()
+                formData.append('_method', 'PUT')
+                formData.append('gallery', JSON.stringify(this.gallery))
 
                 axios.post(this.url, formData, {
                     headers: {

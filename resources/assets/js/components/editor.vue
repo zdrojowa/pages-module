@@ -64,9 +64,15 @@
 
             <div class="col-lg-8">
                 <div class="form-group">
+                  <label>Nazwa</label>
+                  <input type="text" :class="getInputClass('name')" name="name" placeholder="Wpisz nazwę" v-model.lazy="obj.name">
+                  <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
+                </div>
+
+                <div class="form-group">
                     <label>Tytuł</label>
-                    <input type="text" :class="getInputClass('name')" name="name" placeholder="Wpisz tytuł" v-model.lazy="obj.name">
-                    <small v-if="hasError('name')" class="error mt-2 text-danger">{{ errors.name[0] }}</small>
+                    <input type="text" :class="getInputClass('title')" name="title" placeholder="Wpisz tytuł" v-model.lazy="obj.title">
+                    <small v-if="hasError('title')" class="error mt-2 text-danger">{{ errors.title[0] }}</small>
                 </div>
 
                 <div class="form-group">
@@ -108,6 +114,7 @@
                 obj: {
                     id: 0,
                     name: '',
+                    title: '',
                     lead: '',
                     content: '',
                     permalink: '/',
@@ -120,6 +127,7 @@
                 },
                 errors: {
                     name: {},
+                    title: {},
                     slug: {},
                     object: {}
                 },
@@ -134,11 +142,11 @@
         computed: {
 
             url() {
-                return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store';
+                return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store'
             },
 
             hasModel() {
-                return this.obj.type != null && this.obj.type.table_name;
+                return this.obj.type != null && this.obj.type.table_name
             }
         },
 
@@ -146,44 +154,44 @@
 
             getObjects(query) {
                 axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table_name + '&query=' + query)
-                    .then(res => {
-                        this.objects = [];
-                        res.data.forEach(item => {
-                            this.objects.push(item);
-                        });
+                .then(res => {
+                    this.objects = [];
+                    res.data.forEach(item => {
+                        this.objects.push(item)
+                    });
 
-                        this.obj.object = this.getItem(this.objects, 'id', this.obj.object);
-                    }).catch(err => {
+                    this.obj.object = this.getItem(this.objects, 'id', this.obj.object)
+                }).catch(err => {
                     console.log(err)
                 })
             },
 
             selectImage: function(url) {
-                this.obj.image = url;
-                this.$forceUpdate();
+                this.obj.image = url
+                this.$forceUpdate()
             },
 
             hasError: function(key) {
-                return this.errors[key].length > 0;
+                return this.errors[key].length > 0
             },
 
             getInputClass: function(key) {
-                let className = 'form-control ';
+                let className = 'form-control '
                 if (this.hasError(key)) {
-                    className += 'is-invalid';
+                    className += 'is-invalid'
                 } else {
                     if (this.obj[key]) {
-                        className += 'is-valid';
+                        className += 'is-valid'
                     }
                 }
-                return className;
+                return className
             },
 
             getTypes: function() {
                 axios.get('/dashboard/pages-types/get')
                     .then(res => {
-                        this.types = res.data;
-                        this.getPage();
+                        this.types = res.data
+                        this.getPage()
                     }).catch(err => {
                     console.log(err)
                 })
@@ -191,38 +199,38 @@
 
             getMainLang: function() {
                 axios.get('/dashboard/settings/getByKey/lang')
-                    .then(res => {
-                        this.mainLang = res.data.value;
-                        this.obj.lang = this.getItem(this.langs, 'key', this.mainLang);
-                        this.getTypes();
-                    }).catch(err => {
-                        console.log(err);
-                        this.getTypes();
+                .then(res => {
+                    this.mainLang = res.data.value
+                    this.obj.lang = this.getItem(this.langs, 'key', this.mainLang)
+                    this.getTypes()
+                }).catch(err => {
+                    console.log(err)
+                    this.getTypes()
                 });
             },
 
             getLangs: function() {
                 axios.get('/dashboard/languages/get')
-                    .then(res => {
-                        this.langs = res.data;
-                        this.getMainLang();
-                    }).catch(err => {
+                .then(res => {
+                    this.langs = res.data
+                    this.getMainLang()
+                }).catch(err => {
                     console.log(err)
                 })
             },
 
             getParents: function(query) {
                 axios.get('/dashboard/pages/get?query=' + query + '&qid=' + this.obj.id + '&lang=' + this.obj.lang.key)
-                    .then(res => {
-                        this.parents = [];
-                        this.parents.push(this.defaultParent);
+                .then(res => {
+                    this.parents = []
+                    this.parents.push(this.defaultParent)
 
-                        res.data.forEach(item => {
-                            this.parents.push(item);
-                        });
+                    res.data.forEach(item => {
+                        this.parents.push(item)
+                    });
 
-                        this.obj.parent = this.getItem(this.parents, 'id', this.obj.parent);
-                    }).catch(err => {
+                    this.obj.parent = this.getItem(this.parents, 'id', this.obj.parent)
+                }).catch(err => {
                     console.log(err)
                 })
             },
@@ -231,92 +239,96 @@
                 let self = this;
 
                 axios.get('/dashboard/pages/statuses')
-                    .then(res => {
-                        self.statuses = res.data;
-                        this.getLangs();
-                    }).catch(err => {
+                .then(res => {
+                    self.statuses = res.data
+                    this.getLangs()
+                }).catch(err => {
                     console.log(err)
                 })
             },
 
             MyCustomUploadAdapterPlugin ( editor ) {
                 editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
-                    return new MyUploadAdapter( loader );
+                    return new MyUploadAdapter( loader )
                 };
             },
 
             getItem: function(arr, key, val) {
 
-                let item = val;
+                let item = val
 
                 arr.forEach(it => {
                     if (it[key] === val) {
-                        item = it;
+                        item = it
                     }
                 });
 
-                return item;
+                return item
             },
 
             getPage: function() {
-                let self = this;
+                let self = this
                 if (self._id) {
                     axios.get('/dashboard/pages/get?id=' + self._id)
-                        .then(res => {
-                            self.obj = res.data;
+                    .then(res => {
+                        self.obj = res.data
 
-                            if (typeof self.obj.lead === 'undefined') {
-                                self.obj.lead = '';
-                            }
+                        if (typeof self.obj.lead === 'undefined') {
+                            self.obj.lead = ''
+                        }
 
-                            self.obj.status = self.getItem(self.statuses, 'id', self.obj.status);
-                            self.obj.type   = self.getItem(self.types, 'template', self.obj.type);
+                        if (typeof self.obj.title === 'undefined') {
+                          self.obj.title = ''
+                        }
 
-                            self.slug = self.getSlug();
+                        self.obj.status = self.getItem(self.statuses, 'id', self.obj.status)
+                        self.obj.type   = self.getItem(self.types, 'template', self.obj.type)
 
-                            if (self.lang !== self.obj.lang) {
-                                self.obj.lang   = self.lang;
-                                self.obj.id     = 0;
-                                self.obj.parent = this.defaultParent;
-                            }
-                            self.obj.lang = self.getItem(self.langs, 'key', self.obj.lang);
+                        self.slug = self.getSlug()
 
-                            if (self.hasModel && self.obj.object != null) {
-                                self.getObjects(self.obj.object);
-                            }
+                        if (self.lang !== self.obj.lang) {
+                            self.obj.lang   = self.lang
+                            self.obj.id     = 0
+                            self.obj.parent = this.defaultParent
+                        }
+                        self.obj.lang = self.getItem(self.langs, 'key', self.obj.lang)
 
-                            self.getParents(self.obj.parent);
+                        if (self.hasModel && self.obj.object != null) {
+                            self.getObjects(self.obj.object)
+                        }
 
-                        }).catch(err => {
+                        self.getParents(self.obj.parent)
+
+                    }).catch(err => {
                         console.log(err)
                     })
                 } else {
-                    this.parents    = [this.defaultParent];
-                    this.obj.parent = this.defaultParent;
+                    this.parents    = [this.defaultParent]
+                    this.obj.parent = this.defaultParent
                 }
             },
 
             validate: function(e) {
-                e.preventDefault();
+                e.preventDefault()
                 if (this.obj.name) {
-                    let formData = new FormData();
-                    formData.append('_method', this.obj.id ? 'PUT' : 'POST');
-                    formData.append('obj', JSON.stringify(this.obj));
-                    formData.append('translation', this._id);
+                    let formData = new FormData()
+                    formData.append('_method', this.obj.id ? 'PUT' : 'POST')
+                    formData.append('obj', JSON.stringify(this.obj))
+                    formData.append('translation', this._id)
 
                     axios.post(this.url, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     })
-                        .then(res => {
-                            window.location = res.data.redirect;
-                        }).catch(err => {
+                    .then(res => {
+                        window.location = res.data.redirect
+                    }).catch(err => {
                         console.log(err);
                     });
                 } else {
-                    this.errors.name = ['To pole jest wymagane'];
-                    return false;
+                    this.errors.name = ['To pole jest wymagane']
+                    return false
                 }
             },
 
@@ -332,76 +344,76 @@
                     .replace(/ń/gi, 'n')
                     .replace(/\s*$/g, '')
                     .replace(/\s+/g, '-')
-                    .replace(/[^a-z0-9-]/gi, '');
+                    .replace(/[^a-z0-9-]/gi, '')
             },
 
             getSlug: function() {
-                let index = this.obj.permalink.lastIndexOf('/');
-                let slug  = this.obj.permalink.substr(index + 1, this.obj.permalink.length - index);
+                let index = this.obj.permalink.lastIndexOf('/')
+                let slug  = this.obj.permalink.substr(index + 1, this.obj.permalink.length - index)
                 if (slug === this.obj.lang) {
-                    slug = '';
+                    slug = ''
                 }
-                return slug;
+                return slug
             },
 
             setPermalink: function() {
-                this.obj.permalink = '';
+                this.obj.permalink = ''
                 if (this.mainLang !== this.obj.lang.key) {
-                    this.obj.permalink = '/' + this.obj.lang.key;
+                    this.obj.permalink = '/' + this.obj.lang.key
                 }
                 if (this.obj.parent.id) {
-                    this.obj.permalink = this.obj.parent.permalink;
+                    this.obj.permalink = this.obj.parent.permalink
                 }
                 if (this.slug !== '' || this.obj.permalink === '') {
-                    this.obj.permalink += '/' + this.slug;
+                    this.obj.permalink += '/' + this.slug
                 }
-                this.obj.permalink = this.obj.permalink.replace(/\/*/, '/');
+                this.obj.permalink = this.obj.permalink.replace(/\/*/, '/')
             },
 
             checkPermalinkUnique: function() {
                 axios.get('/dashboard/pages/check/' + this.obj.id + '?permalink=' + this.obj.permalink)
-                    .then(res => {
-                        if (res.data) {
-                            this.errors.slug = [];
-                        } else {
-                            this.errors.slug = ['To pole musi być unikalne. Slug z takim rodzicem już istnieje. Musisz wymyślieć inny slug, albo wybrać innego rodzica'];
-                        }
-                    }).catch(err => {
+                .then(res => {
+                    if (res.data) {
+                        this.errors.slug = []
+                    } else {
+                        this.errors.slug = ['To pole musi być unikalne. Slug z takim rodzicem już istnieje. Musisz wymyślieć inny slug, albo wybrać innego rodzica']
+                    }
+                }).catch(err => {
                     console.log(err)
                 })
             }
         },
 
         watch: {
-            'obj.name'() {
-                if (!this.obj.name) {
-                    this.errors.name = ['To pole jest wymagane'];
+            'obj.title'() {
+                if (!this.obj.title) {
+                    this.errors.title = ['To pole jest wymagane']
                 } else {
                     if (this.slug === '' && !this.obj.id) {
-                        this.slug = this.sanitize(this.obj.name);
+                        this.slug = this.sanitize(this.obj.title)
                     }
                 }
             },
 
             'obj.parent'() {
-                this.setPermalink();
-                this.checkPermalinkUnique();
+                this.setPermalink()
+                this.checkPermalinkUnique()
             },
 
             'slug'() {
-                this.setPermalink();
-                this.checkPermalinkUnique();
+                this.setPermalink()
+                this.checkPermalinkUnique()
             },
 
             hasModel() {
                 if (this.hasModel) {
                     if(!this.object) {
-                        this.errors.object = ['To pole jest wymagane'];
+                        this.errors.object = ['To pole jest wymagane']
                     } else {
-                        this.errors.object = [];
+                        this.errors.object = []
                     }
                 } else {
-                    this.errors.object = [];
+                    this.errors.object = []
                 }
             }
         }

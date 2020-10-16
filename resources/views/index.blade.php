@@ -24,31 +24,37 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        <form class="form-inline">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label>Język</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <select name="lang">
-                                        @foreach($langs as $ln)
-                                            <option value="{{ $ln->short_name }}" @if($ln->short_name === $lang) selected @endif>
-                                                {{ $ln->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label>Tytuł</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" name="name" value="{{ $name }}"/>
-                                </div>
+                        <form class="form mb-3 row">
+                            <div class="form-group col-md-4">
+                                <label>Język</label>
+                                <select name="lang" class="form-control">
+                                    @foreach($langs as $ln)
+                                        <option value="{{ $ln->short_name }}" @if($ln->short_name === $lang) selected @endif>
+                                            {{ $ln->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-                        </div>
+                            <div class="form-group col-md-4">
+                                <label>Rodzic</label>
+                                <select name="parent" class="form-control">
+                                    <option value="0" @if($parent === '0') selected @endif>Wszystkie</option>
+                                    @foreach($parents as $parentPage)
+                                        <option value="{{ $parentPage->_id }}" @if($parentPage->_id === $parent) selected @endif>
+                                            {{ $parentPage->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Nazwa</label>
+                                <input type="text" name="name" value="{{ $name }}" class="form-control"/>
+                            </div>
+                        </form>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <td>Nazwa</td>
                                     <td>Tytuł</td>
                                     <td>Status</td>
                                     <td>Język</td>
@@ -60,6 +66,7 @@
                                 @foreach($pages as $page)
                                     <tr>
                                         <td>{{ $page->name }}</td>
+                                        <td>{{ $page->title ?? $page->name }}</td>
                                         <td>{{ $page->status }}</td>
                                         <td>
                                             @if($page->lang === 'en')

@@ -21,6 +21,7 @@ class Page extends Model
         'type',
         'image',
         'name',
+        'title',
         'lead',
         'content',
         'parent',

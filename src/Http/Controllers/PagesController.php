@@ -42,11 +42,21 @@ class PagesController extends Controller {
             $pages->where('name', 'LIKE', '%' . $name . '%');
         }
 
+        $parentsIds = Page::query()->whereNotNull('parent')->where('lang', '=', $lang)->pluck('parent');
+
+        $parents = Page::query()->whereIn('_id', $parentsIds)->orderBy('name');
+        $parent  = $request->get('parent', '0');
+        if ($parent !== '0') {
+            $pages->where('parent', '=', $parent);
+        }
+
         return view('PagesModule::index', [
-            'pages' => $pages->paginate(50, ['*'], 'page', $request->get('page') ?? 1),
-            'langs' => Language::all(),
-            'lang'  => $lang,
-            'name'  => $name
+            'pages'   => $pages->paginate(50, ['*'], 'page', $request->get('page') ?? 1),
+            'langs'   => Language::all(),
+            'lang'    => $lang,
+            'name'    => $name,
+            'parents' => Page::query()->whereIn('_id', $parentsIds)->orderBy('name')->get(),
+            'parent'  => $parent
         ]);
     }
 
