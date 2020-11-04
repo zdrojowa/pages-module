@@ -33,6 +33,7 @@ class Page extends Model
         'highlights',
         'sections',
         'meta_description',
+        'tags',
     ];
 
     public function getHeroImages() {
@@ -121,6 +122,20 @@ class Page extends Model
             }
         }
         return $sections;
+    }
+
+    public function getTags() {
+        if (!empty($this->tags)) {
+            if (is_string($this->tags)) {
+                return json_decode($this->tags);
+            }
+
+            if (is_array($this->tags)) {
+                return $this->tags;
+            }
+        }
+
+        return [];
     }
 
     public static function getBySection($id) {

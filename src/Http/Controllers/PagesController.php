@@ -154,8 +154,20 @@ class PagesController extends Controller {
             $obj['type']   = isset($obj['type']['template']) ? $obj['type']['template'] : 'main';
             $obj['object'] = $obj['object']['id'] ?? null;
 
+            $obj['tags']   = $obj['tags'] ?? null;
+
             if ($page !== null) {
                 unset($obj['hiro_video'], $obj['hiro_images'], $obj['sections'], $obj['gallery']);
+            }
+
+            if (empty($obj['tags'])) {
+                $obj['tags'] = null;
+            } else {
+                $tags = [];
+                foreach ($obj['tags'] as $tag) {
+                    $tags[] = $tag['name'];
+                }
+                $obj['tags'] = $tags;
             }
 
             $request->merge($obj);

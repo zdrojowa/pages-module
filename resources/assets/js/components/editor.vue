@@ -54,6 +54,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Tagi</label>
+                    <multiselect v-model="obj.tags" tag-placeholder="Dodaj tag" placeholder="Dodaj tag" label="name" track-by="name" :options="tags" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+                </div>
+
+                <div class="form-group">
                     <label>Image</label>
                     <media-selector extensions="jpg,jpeg,png" @media-selected="selectImage"></media-selector>
                     <div v-if="obj.image" class="img-thumbnail">
@@ -111,6 +116,7 @@
                 mainLang: 'pl',
                 types: [],
                 objects: [],
+                tags: [],
                 obj: {
                     id: 0,
                     name: '',
@@ -123,7 +129,8 @@
                     parent: this.defaultParent,
                     lang: {key: 'pl', name: 'Polski'},
                     type: null,
-                    object: null
+                    object: null,
+                    tags: [],
                 },
                 errors: {
                     name: {},
@@ -151,6 +158,12 @@
         },
 
         methods: {
+
+            addTag (newTag) {
+                const tag = {name: newTag}
+                this.tags.push(tag)
+                this.obj.tags.push(tag)
+            },
 
             getObjects(query) {
                 axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table_name + '&query=' + query)
@@ -272,6 +285,7 @@
                     axios.get('/dashboard/pages/get?id=' + self._id)
                     .then(res => {
                         self.obj = res.data
+                        let tags = res.data.tags
 
                         if (typeof self.obj.lead === 'undefined') {
                             self.obj.lead = ''
@@ -295,6 +309,13 @@
 
                         if (self.hasModel && self.obj.object != null) {
                             self.getObjects(self.obj.object)
+                        }
+
+                        self.obj.tags = []
+                        if (tags != null) {
+                            tags.forEach(tag => {
+                                self.addTag(tag)
+                            })
                         }
 
                         self.getParents(self.obj.parent)
@@ -407,7 +428,7 @@
 
             hasModel() {
                 if (this.hasModel) {
-                    if(!this.object) {
+                    if(!this.obj.object) {
                         this.errors.object = ['To pole jest wymagane']
                     } else {
                         this.errors.object = []

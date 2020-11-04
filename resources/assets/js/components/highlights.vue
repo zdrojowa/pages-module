@@ -119,14 +119,14 @@
         },
 
         created() {
-            this.getPages();
-            this.getIcons();
+            this.getPages()
+            this.getIcons()
         },
 
         computed: {
 
             url: function () {
-                return '/dashboard/pages/' + this.id;
+                return '/dashboard/pages/' + this.id
             }
         },
 
@@ -135,7 +135,7 @@
             getPages(query) {
                 axios.get('/api/page?lang=' + this.lang + '&select=id,name')
                     .then(res => {
-                        this.pages = res.data;
+                        this.pages = res.data
                     }).catch(err => {
                     console.log(err)
                 })
@@ -147,9 +147,9 @@
                 axios.get('/api/icons')
                     .then(res => {
                         res.data.forEach(item => {
-                            self.options.push(item);
+                            self.options.push(item)
                         })
-                        this.getHighlights();
+                        this.getHighlights()
                     }).catch(err => {
                     console.log(err)
                 })
@@ -160,22 +160,22 @@
                 axios.get('/dashboard/pages/get?id=' + self.id)
                     .then(res => {
                         if (typeof res.data.highlights == 'undefined') {
-                            self.highlights = [];
+                            self.highlights = []
                         } else {
                             if (typeof res.data.highlights == 'string') {
-                                self.highlights = JSON.parse(res.data.highlights);
+                                self.highlights = JSON.parse(res.data.highlights)
                             } else {
                                 res.data.highlights.forEach(item => {
                                     if (item.isPage) {
                                         self.pages.forEach(i => {
                                             if (i.id === item.page) {
-                                                let page = item;
-                                                page.page = i;
-                                                self.highlights.push(page);
+                                                let page = item
+                                                page.page = i
+                                                self.highlights.push(page)
                                             }
                                         });
                                     } else {
-                                        self.highlights.push(item);
+                                        self.highlights.push(item)
                                     }
                                 });
                             }
@@ -189,30 +189,30 @@
                 let url = '';
                 this.options.forEach(item => {
                     if (item.id === id) {
-                        url = item.url;
+                        url = item.url
                     }
                 });
                 return url;
             },
 
             remove(index) {
-                this.highlights.splice(index, 1);
+                this.highlights.splice(index, 1)
             },
 
             removeImage(index) {
-                this.highlights[index].image = '';
+                this.highlights[index].image = ''
                 this.$forceUpdate();
             },
 
             add() {
-                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', isPage: true, page: '', image: '', link: {}});
+                this.highlights.push({id: this.icon.id, title: '', label: '', description: '', isPage: true, page: '', image: '', link: {}})
             },
 
             addImage(url, index) {
-                this.highlights[index].page  = '';
-                this.highlights[index].image = url;
-                this.highlights[index].link  = {text: '', url: ''};
-                this.$forceUpdate();
+                this.highlights[index].page  = ''
+                this.highlights[index].image = url
+                this.highlights[index].link  = {text: '', url: ''}
+                this.$forceUpdate()
             },
 
             save: function() {
@@ -226,15 +226,15 @@
                         label: item.label,
                         description: item.description,
                         isPage: item.isPage,
-                        page: item.page.id,
+                        page: item.isPage ? item.page.id : '',
                         image: item.image,
                         link: item.link
                     });
                 });
 
                 let formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('highlights', JSON.stringify(lights));
+                formData.append('_method', 'PUT')
+                formData.append('highlights', JSON.stringify(lights))
 
                 axios.post(this.url, formData, {
                     headers: {

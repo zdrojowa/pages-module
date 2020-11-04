@@ -145,3 +145,7 @@ All notable changes to `PagesModule` will be documented in this file.
 ## Version 6.0.3
 - Bugfix: page title
 - Bugfix: change image in gallery
+
+## Version 6.1.0
+- Feature: tags
+- Bugfix: highlights
