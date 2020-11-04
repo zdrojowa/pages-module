@@ -34,6 +34,7 @@ class Page extends Model
         'sections',
         'meta_description',
         'tags',
+        'priority',
     ];
 
     public function getHeroImages() {

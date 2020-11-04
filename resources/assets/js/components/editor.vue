@@ -55,7 +55,17 @@
 
                 <div class="form-group">
                     <label>Tagi</label>
-                    <multiselect v-model="obj.tags" tag-placeholder="Dodaj tag" placeholder="Dodaj tag" label="name" track-by="name" :options="tags" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+                    <b-form-tags v-model="obj.tags" tag-variant="success"></b-form-tags>
+                </div>
+
+                <div class="form-group">
+                    <label>Prioritet</label>
+                    <b-input-group>
+                        <b-input-group-prepend>
+                            <b-button @click="obj.priority = 0"><b-icon-slash-circle></b-icon-slash-circle></b-button>
+                        </b-input-group-prepend>
+                        <b-form-rating v-model="obj.priority" color="#ff8800" stars="10"></b-form-rating>
+                    </b-input-group>
                 </div>
 
                 <div class="form-group">
@@ -116,7 +126,6 @@
                 mainLang: 'pl',
                 types: [],
                 objects: [],
-                tags: [],
                 obj: {
                     id: 0,
                     name: '',
@@ -131,6 +140,7 @@
                     type: null,
                     object: null,
                     tags: [],
+                    priority: 0
                 },
                 errors: {
                     name: {},
@@ -158,12 +168,6 @@
         },
 
         methods: {
-
-            addTag (newTag) {
-                const tag = {name: newTag}
-                this.tags.push(tag)
-                this.obj.tags.push(tag)
-            },
 
             getObjects(query) {
                 axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table_name + '&query=' + query)
@@ -285,7 +289,6 @@
                     axios.get('/dashboard/pages/get?id=' + self._id)
                     .then(res => {
                         self.obj = res.data
-                        let tags = res.data.tags
 
                         if (typeof self.obj.lead === 'undefined') {
                             self.obj.lead = ''
@@ -309,13 +312,6 @@
 
                         if (self.hasModel && self.obj.object != null) {
                             self.getObjects(self.obj.object)
-                        }
-
-                        self.obj.tags = []
-                        if (tags != null) {
-                            tags.forEach(tag => {
-                                self.addTag(tag)
-                            })
                         }
 
                         self.getParents(self.obj.parent)

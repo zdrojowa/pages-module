@@ -149,3 +149,6 @@ All notable changes to `PagesModule` will be documented in this file.
 ## Version 6.1.0
 - Feature: tags
 - Bugfix: highlights
+
+## Version 6.2.0
+- Feature: priority
