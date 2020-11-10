@@ -152,3 +152,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.2.0
 - Feature: priority
+
+## Version 6.2.1
+- Bugfix: firefox draggable

@@ -12,9 +12,10 @@
         </b-nav>
 
         <div class="row item-conteiner">
-            <draggable class="list-group" ghost-class="ghost" :list="gallery">
+            <draggable class="list-group" ghost-class="ghost" :list="gallery" handle=".handle">
                 <div class="list-group-item" v-for="(element, index) in gallery" :key="index + element.url">
                     <div class="item gallery-item">
+                        <b-icon-arrows-move class="handle"></b-icon-arrows-move>
                         <div class="thumbnail-img">
                             <media-selector extensions="jpg,jpeg,png" @media-selected="change(index, $event)"></media-selector>
                             <img :src="element.url" class="img-thumbnail">

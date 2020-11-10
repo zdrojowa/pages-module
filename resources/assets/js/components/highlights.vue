@@ -12,9 +12,10 @@
         </b-nav>
 
         <div class="row item-conteiner">
-            <draggable class="list-group" ghost-class="ghost" :list="highlights">
+            <draggable class="list-group" ghost-class="ghost" :list="highlights" handle=".handle">
                 <div class="list-group-item" v-for="(element, index) in highlights" :key="index">
                     <div class="item gallery-item">
+                        <b-icon-arrows-move class="handle"></b-icon-arrows-move>
                         <div v-if="element.id" class="thumbnail-img">
                             <img :src="getIcon(element.id)" class="img-thumbnail">
                         </div>
