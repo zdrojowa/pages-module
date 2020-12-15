@@ -353,7 +353,7 @@
                 return str.toLowerCase()
                     .replace(/ę/gi, 'e')
                     .replace(/ą/gi, 'a')
-                    .replace(/ó/gi, 'u')
+                    .replace(/ó/gi, 'o')
                     .replace(/ł/gi, 'l')
                     .replace(/ś/gi, 's')
                     .replace(/ż|ź/gi, 'z')

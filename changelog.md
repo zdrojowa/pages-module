@@ -155,3 +155,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.2.1
 - Bugfix: firefox draggable
+
+## Version 6.2.2
+- Bugfix: slug
