@@ -53,6 +53,13 @@
                     <small v-if="hasError('object')" class="error mt-2 text-danger">{{ errors.object[0] }}</small>
                 </div>
 
+                <div v-if="isPageTypeIndex" class="form-group">
+                    <label></label>
+                    <b-form-checkbox v-model.lazy="obj.index_display" switch>
+                        Wyświetl na stronie indeksowej
+                    </b-form-checkbox>
+                </div>
+
                 <div class="form-group">
                     <label>Tagi</label>
                     <b-form-tags v-model="obj.tags" tag-variant="success"></b-form-tags>
@@ -157,18 +164,20 @@
         },
 
         computed: {
-
             url() {
                 return this.obj.id ? ('/dashboard/pages/' + this.obj.id) : '/dashboard/pages/store'
             },
 
             hasModel() {
                 return this.obj.type != null && this.obj.type.table_name
+            },
+
+            isPageTypeIndex() {
+                return this.obj && this.obj.type && ['hotels.wellness', 'hotel', 'offer', 'kitchen', 'hotels.conference'].includes(this.obj.type.template)
             }
         },
 
         methods: {
-
             getObjects(query) {
                 axios.get('/dashboard/pages/getObjects?table=' + this.obj.type.table_name + '&query=' + query)
                 .then(res => {
@@ -296,6 +305,10 @@
 
                         if (typeof self.obj.title === 'undefined') {
                           self.obj.title = ''
+                        }
+
+                        if (typeof self.obj.index_display === 'undefined') {
+                            self.obj.index_display = true
                         }
 
                         self.obj.status = self.getItem(self.statuses, 'id', self.obj.status)
