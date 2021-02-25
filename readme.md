@@ -18,13 +18,14 @@ $ composer require zdrojowa/pages-module
 ## NPM required:
 
 ``` bash
-"@ckeditor/ckeditor5-vue": "1.0.1",
 "@ckeditor/ckeditor5-build-classic": "18.0.0",
+"@ckeditor/ckeditor5-vue2": "1.0.5",
 "axios": "^0.19",
-"bootstrap-vue": "2.11.0"
-"vue": "^2.6.10",
+"bootstrap-vue": "2.16.0"
+"vue": "^2.6.12",
 "vue-multiselect": "2.1.6,
-"vuedraggable": "2.23.2",
+"vue-router": "^3.4.9",
+"vuedraggable": "2.24.3",
 ```
 
 ## Usage

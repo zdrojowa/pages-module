@@ -1,0 +1,143 @@
+api.pages:
+  path: /pages
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@get
+  methods:
+    - GET
+
+api.check:
+  path: /pages/check
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@check
+  methods:
+    - GET
+
+api.store:
+  path: /pages/store
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@store
+  methods:
+    - POST
+  permission: PagesModule.add
+
+api.update:
+  path: /pages/{{page}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@update
+  methods:
+    - PUT
+    - PATCH
+  permission: PagesModule.edit
+
+api.addTranslation:
+  path: /pages/add-translation/{{page}}/{lang}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@addTranslation
+  methods:
+    - POST
+  permission: PagesModule.add
+
+api.objects:
+  path: /pages/objects
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@objects
+  methods:
+    - GET
+
+api.remove:
+  path: /pages/remove/{{page}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiPageController@remove
+  methods:
+    - DELETE
+  permission: PagesModule.delete
+
+api.revisions:
+  path: /revisions
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiRevisionController@get
+  methods:
+    - GET
+
+api.revisions.update:
+  path: /revisions/update/{{revision}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiRevisionController@update
+  methods:
+    - POST
+  permission: PagesModule.edit
+
+api.revisions.remove:
+  path: /revisions/remove/{{revision}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiRevisionController@remove
+  methods:
+    - DELETE
+  permission: PagesModule.delete
+
+api.types:
+  path: /types/get
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiTypeController@get
+  methods:
+    - GET
+    - POST
+  permission: PagesModule
+
+api.types.check:
+  path: /types/check
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiTypeController@check
+  methods:
+    - GET
+
+api.types.store:
+  path: /types/store
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiTypeController@store
+  methods:
+    - POST
+  permission: PagesModule.add
+
+api.types.update:
+  path: /types/{{type}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiTypeController@update
+  methods:
+    - PUT
+    - PATCH
+  permission: PagesModule.edit
+
+api.types.remove:
+  path: /types/remove/{{type}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiTypeController@remove
+  methods:
+    - DELETE
+  permission: PagesModule.delete
+
+api.menu:
+  path: /menu
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@get
+  methods:
+    - GET
+
+api.menu.check:
+  path: /menu/check
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@check
+  methods:
+    - GET
+
+api.menu.store:
+  path: /menu/store
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@store
+  methods:
+    - POST
+  permission: PagesModule.add
+
+api.menu.update:
+  path: /menu/{{menu}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@update
+  methods:
+    - PUT
+    - PATCH
+  permission: PagesModule.edit
+
+api.menu.addTranslation:
+  path: /menu/add-translation/{{menu}}/{lang}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@addTranslation
+  methods:
+    - POST
+  permission: PagesModule.add
+
+api.menu.remove:
+  path: /menu/remove/{{menu}}
+  controller: Selene\Modules\PagesModule\Http\Controllers\ApiMenuController@remove
+  methods:
+    - DELETE
+  permission: PagesModule.delete

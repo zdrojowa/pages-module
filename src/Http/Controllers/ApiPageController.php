@@ -2,17 +2,15 @@
 
 namespace Selene\Modules\PagesModule\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Selene\Modules\PagesModule\Models\Menu;
 use Selene\Modules\PagesModule\Models\Page;
 use Selene\Modules\PagesModule\Models\Revision;
 
-class ApiController extends Controller
+class ApiPageController extends Controller
 {
     public function get(Request $request): JsonResponse
     {
@@ -50,7 +48,11 @@ class ApiController extends Controller
         }
 
         if ($request->has('query')) {
-            $pages->where('name', 'LIKE', '%' . $request->get('query') . '%');
+            $search = $request->get('query');
+            $pages->where(function($query) use ($search) {
+                $query->where('_id', '=', $search)
+                    ->orWhere('name', 'LIKE', '%' . $search . '%');
+            });
         }
 
         if ($request->has('parent')) {
@@ -119,7 +121,6 @@ class ApiController extends Controller
     public function update(Request $request, Page $page): JsonResponse
     {
         if ($this->save($request, $page)) {
-            Menu::changeMenu($page, Menu::ACTION_UPDATE, $request->user()->id);
             return response()->json([
                 'redirect' => route('PagesModule::edit', ['page' => $page])
             ]);
@@ -140,22 +141,21 @@ class ApiController extends Controller
 
         $translations = $page->translations ?? [];
 
-        $data = $page->toArray();
-        unset($data['id']);
-        $data['lang'] = $lang;
-        $data['parent'] = null;
-        $data['permalink'] = Page::generatePermalink($lang, Page::getSlug($lang, $page->permalink));
-        $data['status'] = 'draft';
-        $data['translations'] = $translations;
-        $data['translations'][$page->lang] = $page->id;
+        $newPage = $page
+            ->replicate(['parent'])
+            ->fill([
+                'lang' => $lang,
+                'permalink' => Page::generatePermalink($lang, Page::getSlug($lang, $page->permalink)),
+                'status' => 'draft',
+                'translations' => array_merge($translations, [$page->lang => $page->id])
+            ]);
 
-        $newPage = Page::query()->create($data);
+        $newPage->save();
 
-        $newPage->refresh();
-
-        Revision::createRevision('pages', 'created', $newPage, $request->user()->id);
+        Revision::add('pages', 'created', $newPage, $request->user()->id);
 
         foreach ($translations as $translationLang => $translation) {
+            /** @var Page $tr */
             $tr = Page::query()->find($translation);
             if ($tr) {
                 $pageTranslations = $tr->translations ?? [];
@@ -242,7 +242,7 @@ class ApiController extends Controller
 
         $page->refresh();
 
-        Revision::createRevision('pages', $action, $page, $request->user()->id);
+        Revision::add('pages', $action, $page, $request->user()->id);
 
         return $page;
     }
@@ -258,7 +258,7 @@ class ApiController extends Controller
         $objects = DB::connection('mongodb')
             ->table($request->get('table'))
             ->orderBy('name')
-            ->select(['_id', 'name']);
+            ->select(['id', 'name']);
 
         if ($request->has('query')) {
             $query = $request->get('query', '');
@@ -275,78 +275,10 @@ class ApiController extends Controller
     public function remove(Page $page): JsonResponse
     {
         try {
-            if ($page->translations) {
-                foreach ($page->translations as $id) {
-                    /** @var Page $translation */
-                    $translation = Page::query()->find($id);
-                    if ($translation) {
-                        $translations = $translation->translations;
-                        if (isset($translations[$page->lang])) {
-                            unset($translations[$page->lang]);
-                        }
-                        $translation->translations = $translations;
-                        $translation->save();
-                    }
-                }
+            if (!$page->remove()) {
+                throw new \Exception('Cannot remove page');
             }
-
-            $userId = Auth::id();
-
-            Menu::changeMenu($page, Menu::ACTION_DELETE, $userId);
-
-            $page->delete();
-
-            Revision::query()
-                ->create([
-                'table' => 'pages',
-                'action' => 'deleted',
-                'content_id' => $page->_id,
-                'content' => null,
-                'created_at' => now(),
-                'user_id' => $userId
-            ]);
             return response()->json(['message' => 'Strona usunięta']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()],JsonResponse::HTTP_BAD_REQUEST);
-        }
-    }
-
-    public function revisions(Request $request): JsonResponse
-    {
-        return response()->json([
-            'revisions' => Revision::getByContent(
-                $request->get('table'),
-                $request->get('contentId')),
-            'users' => User::all(['id', 'name'])->pluck('name', 'id')
-        ]);
-    }
-
-    public function updateRevision(Revision $revision): JsonResponse
-    {
-        try {
-            $content = DB::connection('mongodb')
-                ->table($revision->table)
-                ->where('_id', '=', $revision->content_id);
-
-            if ($content->first()) {
-                $content->update(json_decode($revision->content, true, 512, JSON_THROW_ON_ERROR));
-            } else {
-                $content->insert(json_decode($revision->content, true, 512, JSON_THROW_ON_ERROR));
-            }
-            return response()->json([
-                'message' => 'Wersja zaktualizowana',
-                'redirect' => route('PagesModule::edit', ['page' => $revision->content_id])
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()],JsonResponse::HTTP_BAD_REQUEST);
-        }
-    }
-
-    public function removeRevision(Revision $revision): JsonResponse
-    {
-        try {
-            $revision->delete();
-            return response()->json(['message' => 'Wersja usunięta']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()],JsonResponse::HTTP_BAD_REQUEST);
         }

@@ -1,30 +1,26 @@
 import Vue from 'vue';
-import CKEditor from '@ckeditor/ckeditor5-vue';
-import MultiSelect from 'vue-multiselect'
-import draggable from 'vuedraggable';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+import {BootstrapVue, BootstrapVueIcons, IconsPlugin} from 'bootstrap-vue';
+import CountryFlag from 'vue-country-flag'
+import VueRouter from 'vue-router'
+import PageIndex from './components/PageIndex'
+import PageTab from './components/PageTab'
+import TypesIndex from './components/TypesIndex'
+import Type from './components/Type'
+import MenuIndex from './components/MenuIndex'
+import MenuTab from './components/MenuTab'
 
 window.axios = require('axios');
 
-Vue.use(CKEditor);
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
+Vue.use(CKEditor)
+Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
+Vue.use(VueRouter)
+Vue.use(CountryFlag)
+Vue.use(require('vue-moment'))
 
-Vue.component('multiselect', MultiSelect);
-Vue.component('draggable', draggable);
-Vue.component('media-selector', require('./components/media-selector.vue').default);
-Vue.component('hiro', require('./components/hiro.vue').default);
-Vue.component('modal', require('./components/modal.vue').default);
-Vue.component('nested', require('./components/nested.vue').default);
-Vue.component('gallery', require('./components/gallery.vue').default);
-Vue.component('page-section', require('./components/page-section.vue').default);
-Vue.component('editor', require('./components/editor.vue').default);
-Vue.component('type', require('./components/type.vue').default);
-Vue.component('edit-section', require('./components/edit-section.vue').default);
-Vue.component('highlights', require('./components/highlights.vue').default);
-Vue.component('seo', require('./components/seo.vue').default);
+const app = document.getElementById('app');
 
-const app = new Vue({
-    el: '#app'
-});
-
+new Vue({
+    components: {PageIndex, PageTab, TypesIndex, Type, MenuIndex, MenuTab}
+}).$mount(app);

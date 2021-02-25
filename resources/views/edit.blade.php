@@ -1,100 +1,50 @@
-@extends('DashboardModule::base')
+@extends('DashboardModule::dashboard.index', ['title' => (isset($page) ? 'Edytowanie' : 'Dodawanie') . ' strony'])
 
-@section('title','Dashboard')
-
-@section('stylesheets')
-    <link rel="stylesheet" href="{{ mix('vendor/css/MediaManager.css','') }}">
-    <link rel="stylesheet" href="{{ mix('vendor/css/RevisionModule.css','') }}">
-    <link rel="stylesheet" href="{{ mix('vendor/css/PagesModule.css','') }}">
+@section('navbar-links')
+    <b-nav-item href="{{ route('PagesModule::index') }}">Strony</b-nav-item>
+    <b-nav-item href="{{ route('PagesModule::types') }}">Typy</b-nav-item>
+    <b-nav-item href="{{ route('PagesModule::menu') }}">Menu</b-nav-item>
 @endsection
 
-@section('sidebar')
-    @include('DashboardModule::sidebar.index', ['menu' => Selene\Support\Facades\MenuRepository::getPresences()])
+@section('navbar-actions')
+    @isset($page)
+        <b-nav-item href="{{ $page->permalink }}" target="_blank">
+            <b-button variant="info">
+                <b-icon-arrow-up-right-square></b-icon-arrow-up-right-square> Podgląd
+            </b-button>
+        </b-nav-item>
+    @endisset
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <div id="app">
-            <b-card no-body>
-                <b-tabs card>
-                    <b-tab active>
-                        <template v-slot:title>
-                            <b-icon-card-text></b-icon-card-text> Strona
-                        </template>
-                        @if (isset($page))
-                            <editor :_id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
-                                {{ csrf_field() }}
-                            </editor>
-                        @else
-                            <editor :_id="0">
-                                {{ csrf_field() }}
-                            </editor>
-                        @endif
-                    </b-tab>
-                    @if(!$new)
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-image></b-icon-image> Hero
-                            </template>
-                            <hiro :_id=`{{ $page->_id }}`>
-                                {{ csrf_field() }}
-                            </hiro>
-                        </b-tab>
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-images></b-icon-images> Galeria
-                            </template>
-                            <gallery :id=`{{ $page->_id }}`>
-                                {{ csrf_field() }}
-                            </gallery>
-                        </b-tab>
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-brightness-high></b-icon-brightness-high> Highlights
-                            </template>
-                            <highlights :id=`{{ $page->_id }}` :lang=`{{ $lang }}`>
-                                {{ csrf_field() }}
-                            </highlights>
-                        </b-tab>
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-columns></b-icon-columns> Sekcje
-                            </template>
-                            <page-section :id=`{{ $page->_id }}`>
-                                {{ csrf_field() }}
-                            </page-section>
-                        </b-tab>
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-search></b-icon-search> SEO
-                            </template>
-                            <seo :id=`{{ $page->_id }}`>
-                                {{ csrf_field() }}
-                            </seo>
-                        </b-tab>
-                        <b-tab>
-                            <template v-slot:title>
-                                <b-icon-clock-history></b-icon-clock-history> History
-                            </template>
-                            @include('RevisionModule::revisions', [
-                                    'table'      => 'pages',
-                                    'content_id' => $page->id
-                                ])
-                        </b-tab>
-                    @endif
-                </b-tabs>
-            </b-card>
-        </div>
-    </div>
+    <b-container fluid>
+        <page-tab
+            :page="{{ isset($page) ? json_encode($page) : json_encode(null) }}"
+            :statuses="{{ json_encode($statuses) }}"
+            :types="{{ json_encode($types) }}"
+            :languages="{{ json_encode($langs) }}"
+            csrf="{{ csrf_token() }}"
+            route="{{ isset($page) ? route('PagesModule::api.update', ['page' => $page]) : route('PagesModule::api.store') }}"
+            media-search-route="{{ route('MediaModule::api.files') }}"
+            media-route='/media/'
+            check-route="{{ route('PagesModule::api.check') }}"
+            page-route="{{ route('PagesModule::api.pages') }}"
+            object-route="{{ route('PagesModule::api.objects') }}"
+            icon-route="{{ route('IconModule::api.icons') }}"
+            revision-route="{{ route('PagesModule::api.revisions') }}"
+            revision-update-route="{{ route('PagesModule::api.revisions.update', ['revision' => 'id']) }}"
+            revision-remove-route="{{ route('PagesModule::api.revisions.remove', ['revision' => 'id']) }}"
+        >
+        </page-tab>
+    </b-container>
+@endsection
+
+@section('stylesheets')
+    @parent
+    <link rel="stylesheet" href="{{ mix('vendor/css/MediaModule.css') }}">
+    <link rel="stylesheet" href="{{ mix('vendor/css/PagesModule.css') }}">
 @endsection
 
 @section('javascripts')
-    @parent
-    @javascript('csrf', csrf_token())
-    @javascript('ajaxUpload', route('MediaManager::media.upload.ajax'))
-    @javascript('infoUrl', route('MediaManager::media.image.info', ['media' => '%%id%%']))
-    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@13.0.1/dist/lazyload.min.js"></script>
-    <script src="{{ mix('vendor/js/MediaManager.js') }}"></script>
-    <script src="{{ mix('vendor/js/RevisionModule.js') }}"></script>
-    <script src="{{ mix('vendor/js/PagesModule.js') }}"></script>
+    <script src="{{ mix("vendor/js/PagesModule.js") }}"></script>
 @endsection

@@ -5,21 +5,19 @@ namespace Selene\Modules\PagesModule\Models;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
-use Selene\Modules\SettingsModule\Models\Setting;
 
 /**
- * @property mixed type
- * @property mixed object
  * @property mixed lang
- * @property mixed permalink
- * @property mixed id
- * @property mixed _id
  * @property mixed translations
+ * @property mixed id
  */
-class Page extends Model
+class Menu extends Model
 {
+    const ACTION_UPDATE = 'update';
+    const ACTION_DELETE = 'delete';
+
     protected $connection = 'mongodb';
-    protected $collection = 'pages';
+    protected $collection = 'menu';
 
     protected $appends = ['id'];
     protected $hidden  = ['_id'];
@@ -27,24 +25,10 @@ class Page extends Model
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'status',
-        'permalink',
         'lang',
-        'type',
-        'image',
         'name',
-        'title',
-        'lead',
-        'content',
-        'parent',
-        'hiro',
         'translations',
-        'object',
-        'gallery',
-        'highlights',
-        'meta_description',
-        'tags',
-        'priority',
+        'structure'
     ];
 
     public function getTranslations() {
@@ -78,21 +62,6 @@ class Page extends Model
         return $translations;
     }
 
-    public function getType() {
-        return Type::query()->where('template', '=', $this->type)->first();
-    }
-
-    public function getObject() {
-        $type = $this->getType();
-        if ($type && $type->table_name) {
-            return DB::connection('mongodb')
-                ->table($type->table_name)
-                ->where('_id', '=', $this->object)
-                ->first();
-        }
-        return null;
-    }
-
     public function remove(): bool
     {
         try {
@@ -100,7 +69,7 @@ class Page extends Model
 
             if ($this->translations) {
                 foreach ($this->translations as $id) {
-                    /** @var Page $translation */
+                    /** @var Menu $translation */
                     $translation = self::query()->find($id);
                     if ($translation) {
                         $translations = $translation->translations;
@@ -115,13 +84,11 @@ class Page extends Model
 
             $userId = Auth::id();
 
-            Menu::changeMenu($this, $userId);
-
             $this->delete();
 
             Revision::query()
                 ->create([
-                    'table' => 'pages',
+                    'table' => 'menu',
                     'action' => 'deleted',
                     'content_id' => $this->_id,
                     'content' => null,
@@ -137,40 +104,56 @@ class Page extends Model
         }
     }
 
-    public static function generatePermalink($lang, $slug, $parent = null): string
-    {
-        $permalink = '/';
-        $mainLang = Setting::query()->where('key', '=', 'lang')->first()->value ?? 'pl';
-        if ($mainLang !== $lang) {
-            $permalink .= $lang . '/';
+    public static function getByLang(string $lang) {
+        $menus = [];
+        foreach (self::query()->where('lang', '=', $lang)->get() as $menu) {
+            $menus[$menu->name] = $menu->structure;
         }
-        if ($parent) {
-            /** @var Page $page */
-            $page = self::query()->find($parent);
-            if ($page) {
-                $permalink = $page->permalink . '/';
-            }
-        }
-        if ($slug) {
-            $permalink .= $slug;
-        }
-        $permalink = str_replace('//', '/', $permalink);
-        if ($permalink === '/') {
-            return $permalink;
-        }
-        return rtrim($permalink, '/');
+        return $menus;
     }
 
-    public static function getSlug($lang, $permalink): string
-    {
-        $index = strrpos($permalink, '/');
-        if ($index === FALSE) {
-            return '';
+    public static function getByName(string $lang, string $name) {
+        $menu = self::query()->where('lang', '=', $lang)
+            ->where('name', '=', $name)
+            ->first();
+
+        return $menu ? $menu->structure : [];
+    }
+
+    public static function getByPage($id) {
+        return self::query()
+            ->where('structure.page', '=', $id)
+            ->orWhere('structure.items.page', '=', $id)
+            ->orWhere('structure.items.items.page', '=', $id)
+            ->orWhere('structure.items.items.items.page', '=', $id)
+            ->get();
+    }
+
+    public static function changeMenu(Page $page, $userId) {
+        foreach (self::getByPage($page->id) as $menu) {
+            $menu->structure = self::changeStructure($menu->structure, $page);
+            if ($menu->save()) {
+                Revision::query()->create([
+                    'table'      => 'menu',
+                    'action'     => 'auto',
+                    'content_id' => $menu->id,
+                    'content'    => json_encode($menu),
+                    'created_at' => now(),
+                    'user_id'    => $userId
+                ]);
+            }
         }
-        $slug = substr($permalink, $index + 1);
-        if ($slug === $lang) {
-            return '';
+    }
+
+    protected static function changeStructure($structure, Page $page) {
+        foreach ($structure as $i => $item) {
+            if (isset($item['page']) && $item['page'] === $page->id) {
+                unset($structure[$i]);
+            }
+            if (isset($item['items'])) {
+                $structure[$i]['items'] = self::changeStructure($item['items'], $page);
+            }
         }
-        return $slug;
+        return $structure;
     }
 }

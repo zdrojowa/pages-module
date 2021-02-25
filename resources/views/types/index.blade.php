@@ -1,78 +1,30 @@
-@extends('DashboardModule::dashboard.index')
+@extends('DashboardModule::dashboard.index', ['title' => 'Typy'])
+
+@section('navbar-links')
+    <b-nav-item href="{{ route('PagesModule::index') }}">Strony</b-nav-item>
+    <b-nav-item href="{{ route('PagesModule::menu') }}">Menu</b-nav-item>
+@endsection
+
+@section('navbar-actions')
+    <b-nav-form>
+        <b-button size="sm" class="my-2 my-sm-0" type="button" variant="success" to="{{ route('PagesModule::types.create') }}">
+            <b-icon-plus></b-icon-plus> Dodaj
+        </b-button>
+    </b-nav-form>
+@endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header clearfix">
-                        <h4 class="card-title float-left">Lista typów</h4>
-                        <a href="{{route('PagesModule::addType')}}" class="text-success float-right">
-                            <i class="mdi mdi-plus-circle"></i> Dodaj
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-striped"></table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <b-container fluid>
+        <types-index
+                route="{{ route('PagesModule::api.types') }}"
+                edit-route="{{ route('PagesModule::types.edit', ['type' => 'id']) }}"
+                remove-route="{{ route('PagesModule::api.types.remove', ['type' => 'id']) }}"
+                csrf="{{ csrf_token() }}"
+        >
+        </types-index>
+    </b-container>
 @endsection
 
 @section('javascripts')
-    @parent
-
-    <script>
-        $('.table').zdrojowaTable({
-            ajax: {
-                url: "{{route('PagesModule::getTypes')}}",
-                method: "POST",
-                data: {
-                    "_token": "{{csrf_token()}}"
-                },
-            },
-            headers: [
-                {
-                    name: 'Nazwa',
-                    type: 'text',
-                    ajax: 'name',
-                    orderable: true,
-                },
-                {
-                    name: 'Szablon',
-                    type: 'text',
-                    ajax: 'template',
-                    orderable: true,
-                },
-                {
-                    name: 'Tabela',
-                    type: 'text',
-                    ajax: 'table_name',
-                    orderable: true
-                },
-                {
-                    name: 'Akcje',
-                    ajax: 'key',
-                    type: 'actions',
-                    buttons: [
-                    @permission('PagesModule.pages')
-                        {
-                            color: 'primary',
-                            icon: 'mdi mdi-pencil',
-                            class: 'remove',
-                            url: "{{route('PagesModule::editType', ['type' => '%%id%%'])}}"
-                        },
-                        {
-                            color: 'danger',
-                            icon: 'mdi mdi-delete',
-                            class: 'ZdrojowaTable--remove-action',
-                            url: "{{route('PagesModule::destroyType', ['type' => '%%id%%'])}}"
-                        },
-                    @endpermission
-                    ]
-                }
-            ]
-        });
-    </script>
+    <script src="{{ mix("vendor/js/PagesModule.js") }}"></script>
 @endsection

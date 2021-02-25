@@ -161,3 +161,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.3.0
 - Add page display in index option
+
+## Version 7.0.0
+- Laravel 8 + Vue

@@ -1,2 +1,6 @@
-pages:
-  name: Moduł strony
+add:
+  name: Dodawanie
+edit:
+  name: Edytowanie
+delete:
+  name: Usuwanie

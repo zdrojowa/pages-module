@@ -3,193 +3,63 @@ index:
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@index
   methods:
     - GET
-  permission: PagesModule.pages
+  permission: PagesModule
 
-pages:
-  path: /dashboard/pages/get
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@get
-  methods:
-    - POST
-    - GET
-
-add:
-  path: /dashboard/pages/add
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@add
+create:
+  path: /dashboard/pages/create
+  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@create
   methods:
     - GET
-  permission: PagesModule.pages
-
-store:
-  path: /dashboard/pages/store
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@store
-  methods:
-    - POST
-  permission: PagesModule.pages
+  permission: PagesModule.add
 
 edit:
   path: /dashboard/pages/{{page}}/edit
   controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@edit
   methods:
     - GET
-  permission: PagesModule.pages
-
-update:
-  path: /dashboard/pages/{{page}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@update
-  methods:
-    - PUT
-    - PATCH
-  permission: PagesModule.pages
-
-destroy:
-  path: /dashboard/pages/destroy/{{page}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@destroy
-  methods:
-    - DELETE
-  permission: PagesModule.pages
-
-statuses:
-  path: /dashboard/pages/statuses
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@statuses
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-check:
-  path: /dashboard/pages/check/{{id}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@check
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-addTranslation:
-  path: /dashboard/pages/add-translation/{{page}}/{lang}
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@addTranslation
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-getObjects:
-  path: /dashboard/pages/getObjects
-  controller: Selene\Modules\PagesModule\Http\Controllers\PagesController@getObjects
-  methods:
-    - GET
-  permission: PagesModule.pages
+  permission: PagesModule.edit
 
 types:
-  path: /dashboard/pages-types
+  path: /dashboard/types
   controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@index
   methods:
     - GET
-  permission: PagesModule.pages
+  permission: PagesModule
 
-getTypes:
-  path: /dashboard/pages-types/get
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@get
+types.create:
+  path: /dashboard/types/create
+  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@create
   methods:
     - GET
-    - POST
-  permission: PagesModule.pages
+  permission: PagesModule.add
 
-addType:
-  path: /dashboard/pages-types/add
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@add
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-storeType:
-  path: /dashboard/pages-types/store
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@store
-  methods:
-    - POST
-  permission: PagesModule.pages
-
-editType:
-  path: /dashboard/pages-types/{{type}}/edit
+types.edit:
+  path: /dashboard/types/{{type}}/edit
   controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@edit
   methods:
     - GET
-  permission: PagesModule.pages
+  permission: PagesModule.edit
 
-updateType:
-  path: /dashboard/pages-types/{{type}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@update
-  methods:
-    - PUT
-    - PATCH
-  permission: PagesModule.pages
-
-destroyType:
-  path: /dashboard/pages-types/destroy/{{type}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@destroy
-  methods:
-    - DELETE
-  permission: PagesModule.pages
-
-checkType:
-  path: /dashboard/pages-types/check/{{id}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\TypesController@check
+menu:
+  path: /dashboard/menu
+  controller: Selene\Modules\PagesModule\Http\Controllers\MenuController@index
   methods:
     - GET
-  permission: PagesModule.pages
+  permission: PagesModule
 
-sections:
-  path: /dashboard/pages-sections
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@index
+menu.create:
+  path: /dashboard/menu/create
+  controller: Selene\Modules\PagesModule\Http\Controllers\MenuController@create
   methods:
     - GET
-  permission: PagesModule.pages
+  permission: PagesModule.add
 
-getSections:
-  path: /dashboard/pages-sections/get
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@get
+menu.edit:
+  path: /dashboard/menu/{{menu}}/edit
+  controller: Selene\Modules\PagesModule\Http\Controllers\MenuController@edit
   methods:
     - GET
-    - POST
-  permission: PagesModule.pages
-
-addSection:
-  path: /dashboard/pages-sections/add
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@add
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-storeSection:
-  path: /dashboard/pages-sections/store
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@store
-  methods:
-    - POST
-  permission: PagesModule.pages
-
-editSection:
-  path: /dashboard/pages-sections/{{section}}/edit
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@edit
-  methods:
-    - GET
-  permission: PagesModule.pages
-
-updateSection:
-  path: /dashboard/pages-sections/{{section}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@update
-  methods:
-    - PUT
-    - PATCH
-  permission: PagesModule.pages
-
-destroySection:
-  path: /dashboard/pages-sections/destroy/{{section}}
-  controller: Selene\Modules\PagesModule\Http\Controllers\SectionsController@destroy
-  methods:
-    - DELETE
-  permission: PagesModule.pages
-
-api.page:
-  path: /api/page
-  controller: Selene\Modules\PagesModule\Http\Controllers\ApiController@page
-  methods:
-    - GET
+  permission: PagesModule.edit
 
 page:
   path: /{{slug}}
@@ -197,4 +67,4 @@ page:
   methods:
     - GET
   where:
-    slug: ^(?!sitemap|api\/v).*
+    slug: ^(?!sitemap|api).*
