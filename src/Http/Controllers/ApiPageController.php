@@ -269,7 +269,10 @@ class ApiPageController extends Controller
             }
         }
 
-        return response()->json($objects->get());
+        return response()->json($objects->get()->map(function($item){
+            $id = (array) $item['_id'];
+            return ['id' => $id['oid'], 'name' => $item['name']];
+        }));
     }
 
     public function remove(Page $page): JsonResponse

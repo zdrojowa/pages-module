@@ -164,3 +164,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 7.0.0
 - Laravel 8 + Vue
+
+## Version 7.0.1
+- Fix objects
