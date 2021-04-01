@@ -38,6 +38,7 @@ class Page extends Model
         'priority',
         'index_display',
         'popup_image',
+        'popup_url',
     ];
 
     public function getHeroImages() {

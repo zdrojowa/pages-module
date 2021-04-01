@@ -76,6 +76,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Popul url</label>
+                    <input type="text" name="title" class="form-control" placeholder="Wpisz url" v-model.lazy="obj.popup_url">
+                </div>
+
+                <div class="form-group">
                     <label>Image</label>
                     <media-selector extensions="jpg,jpeg,png" @media-selected="selectImage"></media-selector>
                     <div v-if="obj.image" class="img-thumbnail">
@@ -159,7 +164,8 @@
                     object: null,
                     tags: [],
                     priority: 0,
-                    popup_image: null
+                    popup_image: null,
+                    popup_url: null
                 },
                 errors: {
                     name: {},

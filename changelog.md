@@ -170,3 +170,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.4.2
 - Add multiple hero videos
+
+## Version 6.4.3
+- Add popup url
