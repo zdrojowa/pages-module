@@ -26,6 +26,7 @@ class Page extends Model
         'content',
         'parent',
         'hiro_video',
+        'hiro_videos',
         'hiro_images',
         'translations',
         'object',

@@ -157,7 +157,7 @@ class PagesController extends Controller {
             $obj['priority'] = $obj['priority'] ?? 0;
 
             if ($page !== null) {
-                unset($obj['hiro_video'], $obj['hiro_images'], $obj['sections'], $obj['gallery']);
+                unset($obj['hiro_video'], $obj['hiro_videos'], $obj['hiro_images'], $obj['sections'], $obj['gallery']);
             }
 
             $request->merge($obj);

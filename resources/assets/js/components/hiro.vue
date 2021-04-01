@@ -12,17 +12,18 @@
 
             <b-form-group label="Video">
                 <media-selector extensions="3gp,3g2,asf,wmv,avi,divx,evo,f4v,flv,mp4,mpg,mpeg" @media-selected="selectVideo"></media-selector>
-
-                <b-button type="button" @click="removeVideo" variant="danger">
-                    <b-icon-trash></b-icon-trash>
-                </b-button>
             </b-form-group>
 
-            <b-container v-if="hiro_video" fluid class="p-4 bg-dark">
-                <b-embed type="video" aspect="4by3" controls poster="poster.png">
-                    <source :src="hiro_video" type="video/webm">
-                    <source :src="hiro_video" type="video/mp4">
-                </b-embed>
+            <b-container fluid class="p-4 bg-dark">
+                <div v-for="(video ,i) in hiro_videos" :key="i" class="thumbnail-img">
+                    <b-embed type="video" aspect="4by3" controls poster="poster.png">
+                        <source :src="video" type="video/webm">
+                        <source :src="video" type="video/mp4">
+                    </b-embed>
+                    <b-button type="button" @click="removeVideos(i)" variant="danger">
+                        <b-icon-trash></b-icon-trash>
+                    </b-button>
+                </div>
             </b-container>
         </div>
 
@@ -53,7 +54,8 @@
         data() {
             return {
                 hiro_video: '',
-                hiro_images: []
+                hiro_images: [],
+                hiro_videos: [],
             };
         },
 
@@ -74,12 +76,12 @@
                 this.hiro_images.splice(position, 1);
             },
 
-            removeVideo: function(position) {
-                this.hiro_video = '';
+            removeVideos: function(position) {
+                this.hiro_videos.splice(position, 1);
             },
 
             selectVideo: function(url) {
-                this.hiro_video = url;
+                this.hiro_videos.push(url);
             },
 
             selectImages: function(url) {
@@ -106,6 +108,16 @@
                                 self.hiro_images = JSON.parse(res.data.hiro_images);
                             }
                         }
+
+                        if (typeof res.data.hiro_videos == 'undefined') {
+                            self.hiro_videos = [];
+                        } else {
+                            if (Array.isArray(res.data.hiro_videos)) {
+                                self.hiro_videos = res.data.hiro_videos;
+                            } else {
+                                self.hiro_videos = JSON.parse(res.data.hiro_videos);
+                            }
+                        }
                     }).catch(err => {
                     console.log(err)
                 })
@@ -117,6 +129,7 @@
                 let formData = new FormData();
                 formData.append('_method', 'PUT');
                 formData.append('hiro_video', this.hiro_video);
+                formData.append('hiro_videos', JSON.stringify(this.hiro_videos));
                 formData.append('hiro_images', JSON.stringify(this.hiro_images));
 
                 axios.post(this.url, formData, {
