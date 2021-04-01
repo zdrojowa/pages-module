@@ -82,6 +82,14 @@
                         <img :src="obj.image"/>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label>Popup image</label>
+                    <media-selector extensions="jpg,jpeg,png" @media-selected="selectPopupImage"></media-selector>
+                    <div v-if="obj.popup_image" class="img-thumbnail">
+                        <img :src="obj.popup_image"/>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-8">
@@ -147,7 +155,8 @@
                     type: null,
                     object: null,
                     tags: [],
-                    priority: 0
+                    priority: 0,
+                    popup_image: null
                 },
                 errors: {
                     name: {},
@@ -194,6 +203,11 @@
 
             selectImage: function(url) {
                 this.obj.image = url
+                this.$forceUpdate()
+            },
+
+            selectPopupImage: function(url) {
+                this.obj.popup_image = url
                 this.$forceUpdate()
             },
 

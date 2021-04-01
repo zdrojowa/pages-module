@@ -161,3 +161,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.3.0
 - Add page display in index option
+
+## Version 6.4.0
+- Add page popup
