@@ -89,6 +89,9 @@
                     <div v-if="obj.popup_image" class="img-thumbnail">
                         <img :src="obj.popup_image"/>
                     </div>
+                    <button class="btn btn-danger" @click="removePopupImage">
+                        Remove
+                    </button>
                 </div>
             </div>
 
@@ -208,6 +211,11 @@
 
             selectPopupImage: function(url) {
                 this.obj.popup_image = url
+                this.$forceUpdate()
+            },
+
+            removePopupImage: function() {
+                this.obj.popup_image = null
                 this.$forceUpdate()
             },
 

@@ -164,3 +164,6 @@ All notable changes to `PagesModule` will be documented in this file.
 
 ## Version 6.4.0
 - Add page popup
+
+## Version 6.4.1
+- Add remove popup
